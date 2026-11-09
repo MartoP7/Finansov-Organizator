@@ -1,0 +1,289 @@
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансов организатор – Вход</title>
+    
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+    <link rel="stylesheet" href="css/login.css">
+    <script src="js/login.js" defer></script>
+</head>
+
+<body>
+
+    <!-- РЕТРО КАЛКУЛАТОР НА ЗАДЕН ПЛАН -->
+    <div class="calculator-background">
+
+        <div class="calculator">
+
+            <div class="calculator-title">
+                <span>FINANCIAL CALCULATOR</span>
+                <div class="calculator-controls">
+                    <span>_</span>
+                    <span>□</span>
+                    <span>×</span>
+                </div>
+            </div>
+
+            <div class="calculator-brand">
+                FINANCIAL<br>ORGANIZER
+            </div>
+
+            <div class="calculator-display">
+                <span>0.00</span>
+                <small>EUR</small>
+            </div>
+
+            <div class="calculator-buttons">
+                <div>MC</div>
+                <div>MR</div>
+                <div>MS</div>
+                <div>M+</div>
+
+                <div>7</div>
+                <div>8</div>
+                <div>9</div>
+                <div>÷</div>
+
+                <div>4</div>
+                <div>5</div>
+                <div>6</div>
+                <div>×</div>
+
+                <div>1</div>
+                <div>2</div>
+                <div>3</div>
+                <div>−</div>
+
+                <div>0</div>
+                <div>.</div>
+                <div>=</div>
+                <div>+</div>
+            </div>
+
+            <div class="calculator-footer">
+                PERSONAL FINANCE SYSTEM
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- ОСНОВНО СЪДЪРЖАНИЕ -->
+    <main class="login-container">
+
+        <header class="login-heading">
+
+            <!-- <div class="app-logo">
+                <span>€</span>
+                 
+            </div> -->
+            <div class="logo">
+                <img src="images/logo.jpg" alt="logo">
+            </div>
+
+            <div>
+                <h1>Финансов организатор</h1>
+                <p>Лична система за управление на финансите</p>
+            </div>
+
+        </header>
+
+
+        <!-- БУТОН ЗА СЪЗДАВАНЕ НА ПОТРЕБИТЕЛ -->
+        <div class="create-user-area">
+
+            <button type="button" id="showCreateUser">
+                <span class="button-icon">+</span>
+                Създай потребител
+            </button>
+
+        </div>
+
+
+        <!-- ПРОЗОРЕЦ ЗА ВХОД -->
+        <section class="window login-window">
+
+            <div class="window-title">
+
+                <span>Вход в системата</span>
+
+                <!-- <div class="window-controls">
+                    <span>_</span>
+                    <span>□</span>
+                    <span>×</span>
+                </div> -->
+
+            </div>
+
+
+            <form id="loginForm">
+
+                <div class="window-content">
+
+                    <div class="welcome-text">
+                        <strong>Добре дошли!</strong>
+                        <p>Изберете потребител и въведете паролата си.</p>
+                    </div>
+
+
+                    <div class="form-group">
+                                 
+                        <label for="userSelect">Потребител:</label>
+
+                        <div class="input-icon-panel">
+                            <select id="userSelect" required>
+                            <option value="">Изберете потребител...</option>
+                        </select>
+                        <img src="images/icons/users.png" class="field-icon" alt="user">
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="loginPassword">Парола:</label>
+                        
+                        <div class="input-icon-panel">
+                                
+                        <input
+                            type="password"
+                            id="loginPassword"
+                            placeholder="Въведете парола"
+                            autocomplete="current-password"
+                            required
+                        >
+                        <img src="images/icons/keys.png" class="field-icon" alt="keys">
+                        </div>
+
+                    </div>
+
+
+                    <p id="loginMessage" class="message"></p>
+
+                </div>
+
+
+                <div class="window-footer">
+
+                    <button type="submit" class="primary-button">
+                        Вход
+                    </button>
+
+                    <button type="reset" id="clearLogin">
+                        Изчисти
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- ПРОЗОРЕЦ ЗА СЪЗДАВАНЕ НА ПОТРЕБИТЕЛ -->
+        <section class="window create-window hidden" id="createUserWindow">
+
+            <div class="window-title">
+
+                <span>Създаване на потребител</span>
+
+                <button
+                    type="button"
+                    class="close-button"
+                    id="closeCreateUser"
+                    aria-label="Затвори"
+                >×</button>
+
+            </div>
+
+
+            <form id="createUserForm">
+
+                <div class="window-content">
+
+                    <p class="create-description">
+                        Въведете име и парола за новия потребител.
+                    </p>
+
+
+                    <div class="form-group">
+
+                        <label for="newUsername">Име:</label>
+
+                        <input
+                            type="text"
+                            id="newUsername"
+                            placeholder="Име на потребителя"
+                            maxlength="30"
+                            autocomplete="off"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="newPassword">Парола:</label>
+
+                        <input
+                            type="password"
+                            id="newPassword"
+                            placeholder="Нова парола"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="confirmPassword">Повтори паролата:</label>
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            placeholder="Повтори паролата"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                    </div>
+
+
+                    <p id="createMessage" class="message"></p>
+
+                </div>
+
+
+                <div class="window-footer">
+
+                    <button type="submit" class="primary-button">
+                        Създай
+                    </button>
+
+                    <button type="button" id="cancelCreateUser">
+                        Отказ
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <footer class="login-footer">
+            Финансов организатор · Лична финансова система
+        </footer>
+
+    </main>
+
+</body>
+</html>

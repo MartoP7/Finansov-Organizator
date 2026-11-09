@@ -1,0 +1,609 @@
+
+/* ==========================================
+   ФИНАНСОВ ОРГАНИЗАТОР
+   RETRO WINDOWS 95/98 LOGIN
+========================================== */
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+    margin: 0;
+}
+
+body {
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-family: Tahoma, Arial, sans-serif;
+
+    background-color: #c0c0c0;
+    color: #111;
+
+    position: relative;
+}
+
+
+/* ==========================================
+   ФОН
+========================================== */
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.12),
+            transparent 45%,
+            rgba(0, 0, 0, 0.12)
+        ),
+        repeating-linear-gradient(
+            0deg,
+            transparent,
+            transparent 3px,
+            rgba(0, 0, 0, 0.025) 4px
+        );
+
+    pointer-events: none;
+}
+
+
+/* ==========================================
+   ДЕКОРАТИВЕН КАЛКУЛАТОР
+========================================== */
+
+.calculator-background {
+    position: fixed;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.calculator {
+    width: 430px;
+    padding: 5px;
+
+    background: #a6a6a6;
+
+    border-top: 3px solid #eeeeee;
+    border-left: 3px solid #eeeeee;
+    border-right: 3px solid #555555;
+    border-bottom: 3px solid #555555;
+
+    transform: translateX(350px) rotate(-8deg);
+
+    opacity: 0.32;
+
+    box-shadow:
+        8px 8px 0 rgba(0, 0, 0, 0.12),
+        15px 15px 25px rgba(0, 0, 0, 0.12);
+}
+
+.calculator-title {
+    height: 28px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 7px;
+
+    background: #316ac5;
+    color: white;
+
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.calculator-controls {
+    display: flex;
+    gap: 5px;
+}
+
+.calculator-controls span {
+    width: 17px;
+    height: 17px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #c0c0c0;
+    color: black;
+
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid #444;
+    border-bottom: 1px solid #444;
+
+    font-size: 12px;
+}
+
+.calculator-brand {
+    padding: 20px 10px 10px;
+
+    color: #303030;
+
+    font-size: 28px;
+    line-height: 1.1;
+    font-weight: bold;
+    letter-spacing: 3px;
+}
+
+.calculator-display {
+    margin: 8px;
+    padding: 12px;
+
+    min-height: 65px;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+
+    background: #d9e3d0;
+
+    border-top: 3px solid #555;
+    border-left: 3px solid #555;
+    border-right: 3px solid white;
+    border-bottom: 3px solid white;
+
+    font-family: "Courier New", monospace;
+    font-size: 32px;
+    font-weight: bold;
+    color: #263a27;
+}
+
+.calculator-display small {
+    font-size: 12px;
+}
+
+.calculator-buttons {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+
+    padding: 8px;
+}
+
+.calculator-buttons div {
+    min-height: 47px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #c0c0c0;
+
+    border-top: 2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid #555;
+    border-bottom: 2px solid #555;
+
+    color: #222;
+
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.calculator-footer {
+    padding: 12px;
+
+    text-align: center;
+
+    color: #333;
+
+    font-size: 10px;
+    letter-spacing: 3px;
+}
+
+
+/* ==========================================
+   ОСНОВЕН ПРОЗОРЕЦ
+========================================== */
+
+.login-container {
+    position: relative;
+    z-index: 2;
+
+    width: 390px;
+    max-width: calc(100% - 30px);
+
+    margin: 35px 0;
+}
+
+
+/* ==========================================
+   ЗАГЛАВИЕ
+========================================== */
+
+.login-heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    margin-bottom: 22px;
+
+    /* text-shadow: 1px 1px white; */
+}
+
+.login-heading h1 {
+    margin: 0;
+
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.login-heading p {
+    margin: 5px 0 0;
+
+    font-size: 11px;
+    color: #444;
+}
+
+.app-logo {
+    width: 43px;
+    height: 43px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #316ac5;
+    color: #ffdf65;
+
+    border-top: 2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid #333;
+    border-bottom: 2px solid #333;
+
+    font-size: 27px;
+    font-weight: bold;
+}
+
+
+/* ==========================================
+   БУТОН СЪЗДАВАНЕ
+========================================== */
+
+.create-user-area {
+    display: flex;
+    justify-content: flex-end;
+
+    margin-bottom: 7px;
+}
+
+button {
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+.create-user-area button,
+.window-footer button {
+    min-height: 30px;
+    padding: 5px 14px;
+
+    background: #c0c0c0;
+    color: #111;
+
+    border-top: 2px solid white;
+    border-left: 2px solid white;
+    border-right: 2px solid #555;
+    border-bottom: 2px solid #555;
+}
+
+.create-user-area button:active,
+.window-footer button:active {
+    border-top: 2px solid #555;
+    border-left: 2px solid #555;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+}
+
+.button-icon {
+    font-size: 16px;
+    font-weight: bold;
+    margin-right: 5px;
+}
+
+
+/* ==========================================
+   ПРОЗОРЦИ
+========================================== */
+
+.window {
+    width: 100%;
+
+    background: #c0c0c0;
+
+    border-top: 2px solid #919191;
+    border-left: 2px solid #919191;
+    border-right: 2px solid #555;
+    border-bottom: 2px solid #555;
+
+    box-shadow: 5px 5px 12px rgba(0, 0, 0, 0.18);
+}
+
+.window-title {
+    height: 27px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 6px;
+
+    background: #316ac5;
+    color: white;
+
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.window-controls {
+    display: flex;
+    gap: 4px;
+}
+
+.window-controls span,
+.close-button {
+    width: 19px;
+    height: 19px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #c0c0c0;
+    color: #111;
+
+    border-top: 1px solid white;
+    border-left: 1px solid white;
+    border-right: 1px solid #555;
+    border-bottom: 1px solid #555;
+
+    font-weight: bold;
+    font-size: 13px;
+}
+
+.close-button {
+    padding: 0;
+}
+
+.window-content {
+    padding: 20px 22px 12px;
+}
+
+.welcome-text {
+    margin-bottom: 20px;
+}
+
+.welcome-text strong {
+    font-size: 14px;
+}
+
+.welcome-text p,
+.create-description {
+    margin: 6px 0 0;
+
+    font-size: 11px;
+    color: #444;
+}
+
+
+/* ==========================================
+   ПОЛЕТА
+========================================== */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.form-group input,
+.form-group select {
+    width: 100%;
+    height: 29px;
+
+    padding: 4px 7px;
+
+    background: white;
+    color: #111;
+
+    border-top: 2px solid #555;
+    border-left: 2px solid #555;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+
+    border-radius: 0;
+
+    font-family: Tahoma, Arial, sans-serif;
+    font-size: 12px;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+    outline: 1px dotted #000;
+    outline-offset: -4px;
+}
+
+
+/* ==========================================
+   БУТОНИ В ПРОЗОРЦИТЕ
+========================================== */
+
+.window-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+
+    padding: 10px 15px;
+
+    border-top: 1px solid #999;
+}
+
+.window-footer button {
+    min-width: 85px;
+}
+
+.window-footer .primary-button {
+    font-weight: bold;
+}
+
+
+/* ==========================================
+   СЪОБЩЕНИЯ
+========================================== */
+
+.message {
+    min-height: 15px;
+
+    margin: 3px 0 0;
+
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.message.error {
+    color: #a00000;
+}
+
+.message.success {
+    color: #006000;
+}
+
+
+/* ==========================================
+   СКРИВАНЕ НА ПРОЗОРЕЦ
+========================================== */
+
+.hidden {
+    display: none;
+}
+
+.create-window {
+    margin-top: 12px;
+}
+
+
+/* ==========================================
+   ДОЛЕН ТЕКСТ
+========================================== */
+
+.login-footer {
+    margin-top: 20px;
+
+    text-align: center;
+
+    font-size: 10px;
+    color: #555;
+
+    /* text-shadow: 1px 1px white; */
+}
+
+
+/* ==========================================
+   АДАПТИВНОСТ
+========================================== */
+
+@media (max-width: 500px) {
+
+    .login-heading h1 {
+        font-size: 18px;
+    }
+
+    .calculator {
+        transform: translateX(120px) rotate(-8deg);
+        opacity: 0.18;
+    }
+
+    .window-content {
+        padding: 16px;
+    }
+
+}
+
+
+
+.logo{
+    display: flex;
+    width: 64px;
+    height: 64px;    
+    
+}
+
+
+
+
+
+/* ==========================================
+   WINDOWS 95/98 BUTTON STYLE
+========================================== */
+
+button {
+    background: #c0c0c0 !important;
+    color: #000000 !important;
+
+    border-top: 2px solid #ffffff !important;
+    border-left: 2px solid #ffffff !important;
+    border-right: 2px solid #555555 !important;
+    border-bottom: 2px solid #555555 !important;
+
+    border-radius: 0 !important;
+
+    font-family: Tahoma, Arial, sans-serif;
+    font-weight: normal;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #d6d6d6 !important;
+}
+
+button:active {
+    border-top: 2px solid #555555 !important;
+    border-left: 2px solid #555555 !important;
+    border-right: 2px solid #ffffff !important;
+    border-bottom: 2px solid #ffffff !important;
+}
+
+.input-icon-panel{
+    display: flex;
+    align-items: center;
+}
+.field-icon{
+
+    width: 32px;
+    height: 32px;
+    margin-left: 5px;
+    border-top: 2px solid #ffffff !important;
+    border-left: 2px solid #ffffff !important;
+    border-right: 2px solid #555555 !important;
+    border-bottom: 2px solid #555555 !important;
+    filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.4));
+}

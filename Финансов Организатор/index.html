@@ -1,0 +1,1512 @@
+
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Финансов организатор</title>
+    
+    <link rel="icon" type="image/jpeg" href="images/logo.jpg">
+    <link rel="stylesheet" href="css/style.css">
+    <script src="js/script.js" defer></script>
+</head>
+
+<body>
+
+<div class="application">
+
+    <!-- ГЛАВЕН ХЕДЪР -->
+    <!-- <header class="main-header">
+
+        <div class="application-title">
+            <span class="app-icon">▤</span>
+            <span>Финансов организатор</span>
+        </div>
+
+        <div class="header-buttons">
+            <button type="button" id="accountsButton">
+                ▣ Сметки
+            </button>
+
+            <button type="button" id="fundsButton">
+                ▣ Фондове
+            </button>
+
+            <button type="button" id="overviewButton">
+                ◫ Обобщение
+            </button>
+        </div>
+
+    </header> -->
+
+    <header class="main-header">
+
+    <div class="application-title">
+
+        <img src="images/logo.jpg" alt="logo"class="app-icon">
+        <!-- <span class="app-icon">
+            <svg class="ui-icon" viewBox="0 0 24 24">
+                <rect x="2.5" y="6" width="19" height="15" rx="1"/>
+                <path d="M2.5 10h19"/>
+                <path d="M7 6V3.5h10V6"/>
+                <path d="M12 13v5"/>
+                <path d="M9.5 15.5h5"/>
+            </svg>
+        </span> -->
+
+        <span>Финансов организатор</span>
+
+    </div>
+
+
+    <div class="header-buttons">
+
+        <button type="button" id="accountsButton">
+
+            <svg class="ui-icon" viewBox="0 0 24 24">
+                <rect x="2" y="5" width="20" height="15" rx="2"/>
+                <path d="M2 9h20"/>
+                <path d="M16 14h3"/>
+                <path d="M6 5V3h12v2"/>
+            </svg>
+
+            Сметки
+
+        </button>
+
+
+        <button type="button" id="fundsButton">
+
+            <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M3 9h18l-1.5 11h-15z"/>
+                <path d="M5 9l2-5h10l2 5"/>
+                <path d="M9 13h6"/>
+                <circle cx="12" cy="16" r="2"/>
+            </svg>
+
+            Фондове
+
+        </button>
+
+
+        <button type="button" id="overviewButton">
+
+            <svg class="ui-icon" viewBox="0 0 24 24">
+                <path d="M3 20h18"/>
+                <rect x="5" y="11" width="3" height="9"/>
+                <rect x="11" y="6" width="3" height="14"/>
+                <rect x="17" y="3" width="3" height="17"/>
+            </svg>
+
+            Обобщение
+
+        </button>
+
+
+        
+        <!-- БУТОН АРХИВ -->
+
+<button type="button" id="archiveButton">
+
+    <svg class="ui-icon" viewBox="0 0 24 24">
+        <path d="M3 4h18v4H3z"/>
+        <path d="M5 8v12h14V8"/>
+        <path d="M9 12h6"/>
+        <path d="M10 15h4"/>
+    </svg>
+
+    Архив
+
+</button>
+
+        
+
+        <button type="button" id="backupButton" class="header-button">
+            <span>🖬</span> Резервно копие
+        </button>
+
+        <button type="button" id="logoutButton" class="logout-button">
+            ↩ Изход
+        </button>
+
+    </div>
+
+</header>
+
+
+    <!-- ОСНОВНА РАБОТНА ОБЛАСТ -->
+    <main class="main-container">
+
+        <!-- ЛЯВА ЧАСТ - ГОДИНИ И МЕСЕЦИ -->
+        <aside class="sidebar">
+
+            <div class="sidebar-header">
+                <span>Периоди</span>
+
+                <div class="sidebar-actions">
+                    <button type="button" id="addYearButton"
+                            title="Добави година">+</button>
+
+                    <button type="button" id="removeYearButton"
+                            title="Премахни година">−</button>
+                </div>
+            </div>
+
+            <div class="tree-container">
+
+                <ul class="year-tree" id="yearTree">
+
+                    <!-- ПРИМЕРНА ГОДИНА -->
+                    <li class="year-item">
+
+                        <div class="tree-row selected"
+                             data-year="2026">
+
+                            <button type="button"
+                                    class="tree-toggle"
+                                    aria-label="Разгъни годината">−</button>
+
+                            <img src="images/icons/clock.png" class="tree-icon" alt="">
+                            <span class="tree-label">2026 Година</span>
+
+                            <button type="button"
+                                    class="add-month-button"
+                                    title="Добави месец">+</button>
+                        </div>
+
+                        <ul class="month-tree">
+
+                            <li class="month-item selected-month"
+                                data-month="0">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Януари
+                            </li>
+
+                            <li class="month-item" data-month="1">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Февруари
+                            </li>
+
+                            <li class="month-item" data-month="2">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Март
+                            </li>
+
+                            <li class="month-item" data-month="3">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Април
+                            </li>
+
+                            <li class="month-item" data-month="4">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Май
+                            </li>
+
+                            <li class="month-item" data-month="5">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Юни
+                            </li>
+
+                            <li class="month-item" data-month="6">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Юли
+                            </li>
+
+                            <li class="month-item" data-month="7">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Август
+                            </li>
+
+                            <li class="month-item" data-month="8">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Септември
+                            </li>
+
+                            <li class="month-item" data-month="9">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Октомври
+                            </li>
+
+                            <li class="month-item" data-month="10">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Ноември
+                            </li>
+
+                            <li class="month-item" data-month="11">
+                                <img src="images/icons/calendar.png" class="tree-icon" alt=""> Декември
+                            </li>
+
+                        </ul>
+
+                    </li>
+
+                </ul>
+
+            </div>
+
+            <div class="sidebar-footer">
+                <span>Избран период:</span>
+                <strong id="selectedPeriod">Януари 2026</strong>
+            </div>
+
+        </aside>
+
+
+        <!-- ЦЕНТРАЛНА РАБОТНА ЧАСТ -->
+        <section class="workspace">
+
+            <!-- ИНФОРМАЦИОНЕН ПАНЕЛ -->
+            <section class="summary-panel">
+
+                <div class="summary-item">
+                    <span>Общо приходи</span>
+                    <strong id="totalIncome">0.00 €</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Общо разходи</span>
+                    <strong id="totalExpenses">0.00 €</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Баланс</span>
+                    <strong id="totalBalance">0.00 €</strong>
+                </div>
+
+                <div class="summary-item">
+                    <span>Активни записи</span>
+                    <strong id="activeRecords">0</strong>
+                </div>
+
+            </section>
+
+
+            <!-- ЛЕНТА С БУТОНИ -->
+            <section class="toolbar">
+
+                <div class="toolbar-group">
+
+                    <button type="button"
+                            id="activateRecordButton"
+                            title="Активиране на запис">
+                        <!-- <span class="button-icon">✓</span> -->
+                         <img src="images/icons/check.png" class="toolbar-button" alt="check">
+                    </button>
+
+                    <button type="button"
+                            id="deactivateRecordButton"
+                            title="Деактивиране на запис">
+                        <!-- <span class="button-icon">✕</span> -->
+                        <img src="images/icons/cross.png" class="toolbar-button" alt="cross">
+                    </button>
+
+                </div>
+
+                <div class="toolbar-separator"></div>
+
+                <div class="toolbar-group">
+
+                    <button type="button"
+                            id="addRecordButton"
+                            title="Добави нов запис">
+                        <img src="images/icons/addRecord.png" class="button-icon" alt="add">
+                    </button>
+
+                    <button type="button"
+                            id="editRecordButton"
+                            title="Редактирай избрания запис">
+                        <img src="images/icons/editRecord.png" class="button-icon" alt="edit">
+                    </button>
+
+                    <button type="button"
+                            id="deleteRecordButton"
+                            title="Изтрий избрания запис">
+                        <img src="images/icons/deleteRecord.png" class="button-icon" alt="delete">
+                    </button>
+
+                </div>
+
+                <div class="toolbar-separator"></div>
+
+                <div class="toolbar-group">
+
+                    <button type="button"
+                            id="filterButton"
+                            title="Филтрирай записите">
+                        <!-- <span class="button-icon">⚑</span> -->
+                         <img src="images/icons/filter.png" class="button-icon" alt="filter">
+                    </button>
+
+                    <button type="button"
+                            id="refreshButton"
+                            title="Обнови таблицата">
+                        <img src="images/icons/refresh.png" class="button-icon" alt="refresh">
+                    </button>
+
+                    <button type="button"
+                            id="printButton"
+                            title="Принтирай записите">
+                        <img src="images/icons/print.png" class="button-icon" alt="print">
+                    </button>
+
+                    <button type="button"
+                            id="exportButton"
+                            title="Експортирай записите">
+                        <img src="images/icons/export.png" class="button-icon" alt="export">
+                    </button>
+
+                </div>
+
+            </section>
+
+
+            <!-- ЗАГЛАВИЕ НА ТАБЛИЦАТА -->
+            <div class="table-heading">
+
+                <div class="table-title">
+                    Записи за периода:
+                    <strong id="tablePeriod">Януари 2026</strong>
+                </div>
+
+                <div class="table-record-count">
+                    Брой записи: <strong id="recordCount">0</strong>
+                </div>
+
+            </div>
+
+
+            <!-- ТАБЛИЦА СЪС ЗАПИСИ -->
+            <section class="records-container">
+
+                <table class="records-table">
+
+                    <thead>
+                        <tr>
+                            <th class="status-column">Статус</th>
+                            <th>Вид</th>
+                            <th>Дата</th>
+                            <th>Стойност (€)</th>
+                            <th>Сметка</th>
+                            <th>Категория</th>
+                            <th>Получател / Източник</th>
+                            <th>Описание</th>
+                        </tr>
+                    </thead>
+
+                    <tbody id="recordsTableBody">
+
+                        <!-- Тук JavaScript ще добавя записите -->
+
+                        <tr class="empty-table-row">
+                            <td colspan="8">
+                                Няма налични записи за избрания период.
+                            </td>
+                        </tr>
+
+                    </tbody>
+
+                </table>
+
+            </section>
+
+
+            <!-- ДОЛЕН СТАТУСЕН ПАНЕЛ -->
+            <footer class="status-bar">
+
+                <span id="statusMessage">
+                    Готово.
+                </span>
+
+                <div>
+                    <span class="status-right">
+                    Валута: EUR (€)
+                </span>
+                <span class="status-right">
+                    Версия: 1.2
+                </span>
+                </div>
+
+            </footer>
+
+        </section>
+
+    </main>
+
+</div>
+
+
+<!-- ========================================= -->
+<!-- ПРОЗОРЕЦ ЗА ДОБАВЯНЕ / РЕДАКТИРАНЕ НА ЗАПИС -->
+<!-- ========================================= -->
+
+<dialog id="recordDialog" class="app-dialog">
+
+    <form id="recordForm">
+
+        <div class="dialog-header">
+            <span id="recordDialogTitle">Добавяне на нов запис</span>
+
+            <button type="button"
+                    class="dialog-close"
+                    data-close="recordDialog">✕</button>
+        </div>
+
+        <div class="dialog-content">
+
+            <input type="hidden" id="recordId">
+
+            <div class="form-row">
+
+                <label for="recordType">Вид на записа:</label>
+
+                <select id="recordType" required>
+                    <option value="income">Приход</option>
+                    <option value="expense">Разход</option>
+                    <option value="transfer">Прехвърляне между сметки</option>
+                    <option value="fund">Вноска във фонд</option>
+                    <option value="refund">Възстановена сума</option>
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="recordDate">Дата:</label>
+
+                <input type="date" id="recordDate" required>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="recordAmount">Стойност (€):</label>
+
+                <input type="number"
+                       id="recordAmount"
+                       min="0.01"
+                       step="0.01"
+                       placeholder="0.00"
+                       required>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="recordAccount">Сметка:</label>
+
+                <select id="recordAccount" required>
+                    <option value="">Избери сметка...</option>
+                </select>
+
+            </div>
+
+
+            <div class="form-row" id="destinationAccountRow" hidden>
+
+                <label for="destinationAccount">Към сметка:</label>
+
+                <select id="destinationAccount">
+                    <option value="">Избери сметка...</option>
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="recordCategory">Категория:</label>
+
+                <select id="recordCategory">
+                    <option value="">Без категория</option>
+                    <option value="salary">Заплата</option>
+                    <option value="food">Храна</option>
+                    <option value="fuel">Гориво</option>
+                    <option value="bills">Сметки</option>
+                    <option value="shopping">Покупки</option>
+                    <option value="entertainment">Забавление</option>
+                    <option value="health">Здраве</option>
+                    <option value="education">Образование</option>
+                    <option value="other">Други</option>
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="recordSource">Получател / Източник:</label>
+
+                <input type="text"
+                       id="recordSource"
+                       placeholder="Например: Работодател, магазин...">
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="recordDescription">Описание:</label>
+
+                <textarea id="recordDescription"
+                          rows="3"
+                          placeholder="Допълнителна информация..."></textarea>
+
+            </div>
+
+
+            <div class="form-row checkbox-row">
+
+                <label for="recordActive">Активен запис:</label>
+
+                <input type="checkbox" id="recordActive">
+
+            </div>
+
+        </div>
+
+
+        <div class="dialog-footer">
+
+            <button type="submit" id="saveRecordButton">
+                ✓ Запази
+            </button>
+
+            <button type="button"
+                    data-close="recordDialog">
+                Отказ
+            </button>
+
+        </div>
+
+    </form>
+
+</dialog>
+
+
+<!-- ========================================= -->
+<!-- ПРОЗОРЕЦ ЗА СМЕТКИ -->
+<!-- ========================================= -->
+
+<dialog id="accountsDialog" class="app-dialog large-dialog">
+
+    <div class="dialog-header">
+
+        <span>Управление на сметки</span>
+
+        <button type="button"
+                class="dialog-close"
+                data-close="accountsDialog">✕</button>
+
+    </div>
+
+
+    <div class="dialog-content">
+
+        <div class="management-toolbar">
+
+            <button type="button" id="addAccountButton">
+                + Нова сметка
+            </button>
+
+            <button type="button" id="editAccountButton">
+                ✎ Редактирай
+            </button>
+
+            <button type="button" id="deleteAccountButton">
+                ✕ Изтрий
+            </button>
+
+            <button type="button" id="viewAccountButton">
+                ⓘ Провери сметка
+            </button>
+
+        </div>
+
+
+        <table class="management-table">
+
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Име на сметка</th>
+                    <th>Дата на създаване</th>
+                    <th>Последно използвана</th>
+                    <th>Наличност (€)</th>
+                </tr>
+            </thead>
+
+            <tbody id="accountsTableBody">
+
+                <!-- Сметките ще се зареждат тук -->
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</dialog>
+
+
+<!-- ПРОЗОРЕЦ ЗА СЪЗДАВАНЕ НА СМЕТКА -->
+
+<dialog id="accountFormDialog" class="app-dialog">
+
+    <form id="accountForm">
+
+        <div class="dialog-header">
+
+            <span id="accountDialogTitle">Нова сметка</span>
+
+            <button type="button"
+                    class="dialog-close"
+                    data-close="accountFormDialog">✕</button>
+
+        </div>
+
+
+        <div class="dialog-content">
+
+            <div class="form-row">
+
+                <label>Номер на сметка:</label>
+
+                <input type="text"
+                       id="accountNumber"
+                       readonly
+                       placeholder="Автоматично генериране">
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="accountName">Име на сметка:</label>
+
+                <input type="text"
+                       id="accountName"
+                       placeholder="Например: Основна сметка"
+                       required>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="accountDescription">Описание:</label>
+
+                <textarea id="accountDescription"
+                          rows="3"
+                          placeholder="Допълнителна информация..."></textarea>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="accountInitialBalance">
+                    Начална наличност (€):
+                </label>
+
+                <input type="number"
+                       id="accountInitialBalance"
+                       min="0"
+                       step="0.01"
+                       value="0.00"
+                       required>
+
+            </div>
+
+        </div>
+
+
+        <div class="dialog-footer">
+
+            <button type="submit">✓ Създай сметка</button>
+
+            <button type="button"
+                    data-close="accountFormDialog">Отказ</button>
+
+        </div>
+
+    </form>
+
+</dialog>
+
+
+<!-- ПРОЗОРЕЦ ЗА ПРЕГЛЕЖДАНЕ НА СМЕТКА -->
+
+<dialog id="accountDetailsDialog" class="app-dialog">
+
+    <div class="dialog-header">
+
+        <span>Информация за сметка</span>
+
+        <button type="button"
+                class="dialog-close"
+                data-close="accountDetailsDialog">✕</button>
+
+    </div>
+
+
+    <div class="dialog-content">
+
+        <div class="details-row">
+            <span>Номер:</span>
+            <strong id="detailAccountNumber">-</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Име:</span>
+            <strong id="detailAccountName">-</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Дата на създаване:</span>
+            <strong id="detailAccountCreated">-</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Последно използвана:</span>
+            <strong id="detailAccountLastUsed">-</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Начална наличност:</span>
+            <strong id="detailAccountInitial">0.00 €</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Текуща наличност:</span>
+            <strong id="detailAccountBalance">0.00 €</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Описание:</span>
+            <strong id="detailAccountDescription">-</strong>
+        </div>
+
+    </div>
+
+
+    <div class="dialog-footer">
+
+        <button type="button"
+                data-close="accountDetailsDialog">Затвори</button>
+
+    </div>
+
+</dialog>
+
+
+<!-- ========================================= -->
+<!-- ПРОЗОРЕЦ ЗА ФОНДОВЕ -->
+<!-- ========================================= -->
+
+<dialog id="fundsDialog" class="app-dialog large-dialog">
+
+    <div class="dialog-header">
+
+        <span>Управление на фондове</span>
+
+        <button type="button"
+                class="dialog-close"
+                data-close="fundsDialog">✕</button>
+
+    </div>
+
+
+    <div class="dialog-content">
+
+        <div class="management-toolbar">
+
+            <button type="button" id="addFundButton">
+                + Нов фонд
+            </button>
+
+            <button type="button" id="editFundButton">
+                ✎ Редактирай
+            </button>
+
+            <button type="button" id="deleteFundButton">
+                ✕ Изтрий
+            </button>
+
+            <button type="button" id="viewFundButton">
+                ⓘ Преглед на фонд
+            </button>
+
+            <button type="button" id="contributeFundButton">
+                + Добави средства
+            </button>
+
+        </div>
+
+
+        <table class="management-table">
+
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Име на фонд</th>
+                    <th>Събрана сума (€)</th>
+                    <th>Цел (€)</th>
+                    <th>Прогрес</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
+
+            <tbody id="fundsTableBody">
+
+                <!-- Фондовете ще се зареждат тук -->
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</dialog>
+
+
+<!-- ПРОЗОРЕЦ ЗА СЪЗДАВАНЕ НА ФОНД -->
+
+<dialog id="fundFormDialog" class="app-dialog">
+
+    <form id="fundForm">
+
+        <div class="dialog-header">
+
+            <span id="fundDialogTitle">Създаване на нов фонд</span>
+
+            <button type="button"
+                    class="dialog-close"
+                    data-close="fundFormDialog">✕</button>
+
+        </div>
+
+
+        <div class="dialog-content">
+
+            <div class="form-row">
+
+                <label for="fundName">Име на фонда:</label>
+
+                <input type="text"
+                       id="fundName"
+                       placeholder="Например: Нова кола"
+                       required>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="fundDescription">Описание:</label>
+
+                <textarea id="fundDescription"
+                          rows="3"
+                          placeholder="За какво спестявам?"></textarea>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="fundTarget">Целева стойност (€):</label>
+
+                <input type="number"
+                       id="fundTarget"
+                       min="0.01"
+                       step="0.01"
+                       placeholder="0.00"
+                       required>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="fundInitialAmount">
+                    Начална сума (€):
+                </label>
+
+                <input type="number"
+                       id="fundInitialAmount"
+                       min="0"
+                       step="0.01"
+                       value="0.00">
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="fundDeadline">Краен срок:</label>
+
+                <input type="date" id="fundDeadline">
+
+            </div>
+
+        </div>
+
+
+        <div class="dialog-footer">
+
+            <button type="submit">✓ Създай фонд</button>
+
+            <button type="button"
+                    data-close="fundFormDialog">Отказ</button>
+
+        </div>
+
+    </form>
+
+</dialog>
+
+
+<!-- ПРОЗОРЕЦ ЗА ПРЕГЛЕЖДАНЕ НА ФОНД -->
+
+<dialog id="fundDetailsDialog" class="app-dialog">
+
+    <div class="dialog-header">
+
+        <span>Информация за фонд</span>
+
+        <button type="button"
+                class="dialog-close"
+                data-close="fundDetailsDialog">✕</button>
+
+    </div>
+
+
+    <div class="dialog-content">
+
+        <div class="details-row">
+            <span>Номер:</span>
+            <strong id="detailFundNumber">-</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Име:</span>
+            <strong id="detailFundName">-</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Описание:</span>
+            <strong id="detailFundDescription">-</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Дата на създаване:</span>
+            <strong id="detailFundCreated">-</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Последно захранване:</span>
+            <strong id="detailFundLastContribution">-</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Налична сума:</span>
+            <strong id="detailFundBalance">0.00 €</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Целева сума:</span>
+            <strong id="detailFundTarget">0.00 €</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Оставаща сума:</span>
+            <strong id="detailFundRemaining">0.00 €</strong>
+        </div>
+
+        <div class="details-row">
+            <span>Краен срок:</span>
+            <strong id="detailFundDeadline">-</strong>
+        </div>
+
+        <div class="fund-progress-container">
+
+            <div class="fund-progress-bar">
+                <div id="fundProgressFill"></div>
+            </div>
+
+            <span id="fundProgressText">0%</span>
+
+        </div>
+
+    </div>
+
+
+    <div class="dialog-footer">
+
+        <button type="button"
+                data-close="fundDetailsDialog">Затвори</button>
+
+    </div>
+
+</dialog>
+
+
+<!-- ========================================= -->
+<!-- ПРОЗОРЕЦ ЗА ПРЕХВЪРЛЯНЕ КЪМ ФОНД -->
+<!-- ========================================= -->
+
+<dialog id="fundContributionDialog" class="app-dialog">
+
+    <form id="fundContributionForm">
+
+        <div class="dialog-header">
+
+            <span>Добавяне на средства към фонд</span>
+
+            <button type="button"
+                    class="dialog-close"
+                    data-close="fundContributionDialog">✕</button>
+
+        </div>
+
+
+        <div class="dialog-content">
+
+            <div class="form-row">
+
+                <label for="contributionFund">Фонд:</label>
+
+                <select id="contributionFund" required>
+                    <option value="">Избери фонд...</option>
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="contributionAccount">Източник – сметка:</label>
+
+                <select id="contributionAccount" required>
+                    <option value="">Избери сметка...</option>
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="contributionAmount">Сума (€):</label>
+
+                <input type="number"
+                       id="contributionAmount"
+                       min="0.01"
+                       step="0.01"
+                       placeholder="0.00"
+                       required>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="contributionDate">Дата:</label>
+
+                <input type="date"
+                       id="contributionDate"
+                       required>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="contributionDescription">Описание:</label>
+
+                <textarea id="contributionDescription"
+                          rows="2"></textarea>
+
+            </div>
+
+        </div>
+
+
+        <div class="dialog-footer">
+
+            <button type="submit">✓ Прехвърли средства</button>
+
+            <button type="button"
+                    data-close="fundContributionDialog">Отказ</button>
+
+        </div>
+
+    </form>
+
+</dialog>
+
+
+<!-- ========================================= -->
+<!-- ПРОЗОРЕЦ ЗА ФИЛТРИРАНЕ -->
+<!-- ========================================= -->
+
+<dialog id="filterDialog" class="app-dialog">
+
+    <form id="filterForm">
+
+        <div class="dialog-header">
+
+            <span>Филтриране на записи</span>
+
+            <button type="button"
+                    class="dialog-close"
+                    data-close="filterDialog">✕</button>
+
+        </div>
+
+
+        <div class="dialog-content">
+
+            <div class="form-row">
+
+                <label for="filterType">Вид:</label>
+
+                <select id="filterType">
+                    <option value="">Всички</option>
+                    <option value="income">Приход</option>
+                    <option value="expense">Разход</option>
+                    <option value="transfer">Прехвърляне</option>
+                    <option value="fund">Вноска във фонд</option>
+                    <option value="refund">Възстановена сума</option>
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="filterAccount">Сметка:</label>
+
+                <select id="filterAccount">
+                    <option value="">Всички сметки</option>
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="filterStatus">Статус:</label>
+
+                <select id="filterStatus">
+                    <option value="">Всички</option>
+                    <option value="active">Активни</option>
+                    <option value="inactive">Неактивни</option>
+                </select>
+
+            </div>
+
+
+            <div class="form-row">
+
+                <label for="filterCategory">Категория:</label>
+
+                <select id="filterCategory">
+                    <option value="">Всички категории</option>
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="dialog-footer">
+
+            <button type="submit">Приложи</button>
+
+            <button type="button" id="clearFiltersButton">
+                Изчисти филтрите
+            </button>
+
+            <button type="button"
+                    data-close="filterDialog">Затвори</button>
+
+        </div>
+
+    </form>
+
+</dialog>
+
+
+<!-- ========================================= -->
+<!-- ПРОЗОРЕЦ ЗА ОБОБЩЕНИЕ -->
+<!-- ========================================= -->
+
+<dialog id="overviewDialog" class="app-dialog large-dialog">
+
+    <div class="dialog-header">
+
+        <span>Финансово обобщение</span>
+
+        <button type="button"
+                class="dialog-close"
+                data-close="overviewDialog">✕</button>
+
+    </div>
+
+
+    <div class="dialog-content">
+
+        <h3>Избран период</h3>
+
+        <div class="overview-grid">
+
+            <div class="overview-item">
+                <span>Приходи</span>
+                <strong id="overviewIncome">0.00 €</strong>
+            </div>
+
+            <div class="overview-item">
+                <span>Разходи</span>
+                <strong id="overviewExpenses">0.00 €</strong>
+            </div>
+
+            <div class="overview-item">
+                <span>Нетен резултат</span>
+                <strong id="overviewBalance">0.00 €</strong>
+            </div>
+
+            <div class="overview-item">
+                <span>Общо наличност по сметки</span>
+                <strong id="overviewAccounts">0.00 €</strong>
+            </div>
+
+            <div class="overview-item">
+                <span>Спестени средства във фондове</span>
+                <strong id="overviewFunds">0.00 €</strong>
+            </div>
+
+        </div>
+
+        <h3>Допълнителна информация</h3>
+
+        <div id="overviewDetails">
+            Няма налична информация.
+        </div>
+
+    </div>
+
+
+    <div class="dialog-footer">
+
+        <button type="button"
+                data-close="overviewDialog">Затвори</button>
+
+    </div>
+
+</dialog>
+
+
+<!-- ========================================= -->
+<!-- ПОТВЪРЖДЕНИЕ ПРИ ИЗТРИВАНЕ -->
+<!-- ========================================= -->
+
+<dialog id="confirmDialog" class="app-dialog">
+
+    <div class="dialog-header">
+        Потвърждение
+    </div>
+
+    <div class="dialog-content">
+
+        <p id="confirmMessage">
+            Сигурни ли сте, че искате да изтриете този запис?
+        </p>
+
+    </div>
+
+    <div class="dialog-footer">
+
+        <button type="button" id="confirmYesButton">
+            Да
+        </button>
+
+        <button type="button"
+                data-close="confirmDialog">
+            Не
+        </button>
+
+    </div>
+
+</dialog>
+
+<!-- РЕЗЕРВНО КОПИЕ -->
+<div id="backupWindow" class="backup-overlay" style="display: none;">
+
+    <div class="backup-dialog">
+
+        <div class="backup-titlebar">
+            <span>Резервно копие</span>
+            <button type="button" id="closeBackupButton">×</button>
+        </div>
+
+        <div class="backup-content">
+
+            <div class="backup-description">
+                Управление на резервните копия на финансовите данни.
+            </div>
+
+            <div class="backup-options">
+
+                <button type="button" id="createBackupButton"
+                        class="backup-option">
+                    <img src="images/icons/save.png" class="backup-icon" alt="save">
+                    <span>
+                        <strong>Създаване на резервно копие</strong>
+                        <small>Запазване на всички данни във файл JSON.</small>
+                    </span>
+                </button>
+
+                <button type="button" id="restoreBackupButton"
+                        class="backup-option">
+                    <img src="images/icons/upload.png" class="backup-icon" alt="upload">
+                    <span>
+                        <strong>Възстановяване от резервно копие</strong>
+                        <small>Зареждане на данни от съществуващ JSON файл.</small>
+                    </span>
+                </button>
+
+            </div>
+
+            <input type="file"
+                   id="backupFileInput"
+                   accept=".json,application/json"
+                   hidden>
+
+            <div id="backupMessage" class="backup-message"></div>
+
+            <div class="backup-footer">
+                <button type="button" id="cancelBackupButton">
+                    Затвори
+                </button>
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+
+<!-- ========================================= -->
+<!-- ПРОЗОРЕЦ АРХИВ -->
+<!-- ========================================= -->
+
+<div id="archiveWindow" class="archive-overlay" style="display: none;">
+
+    <div class="archive-dialog">
+
+        <!-- ЗАГЛАВНА ЛЕНТА -->
+
+        <div class="archive-titlebar">
+
+            <span>
+                <img src="images/icons/lock.png" alt=""
+                     class="archive-title-icon">
+                Архив на финансовите периоди
+            </span>
+
+            <button type="button" id="closeArchiveButton">
+                ×
+            </button>
+
+        </div>
+
+
+        <!-- СЪДЪРЖАНИЕ -->
+
+        <div class="archive-content">
+
+            <div class="archive-description">
+
+                Тук можете да преглеждате всички архивирани
+                години и месеци от Вашия финансов организатор.
+
+            </div>
+
+
+            <!-- ОБОБЩЕНА ИНФОРМАЦИЯ -->
+
+            <div class="archive-summary">
+
+                <div class="archive-summary-item">
+
+                    <span>Архивирани години</span>
+
+                    <strong id="archiveYearsCount">0</strong>
+
+                </div>
+
+
+                <div class="archive-summary-item">
+
+                    <span>Архивирани месеци</span>
+
+                    <strong id="archiveMonthsCount">0</strong>
+
+                </div>
+
+
+                <div class="archive-summary-item">
+
+                    <span>Финансови записи</span>
+
+                    <strong id="archiveRecordsCount">0</strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- СПИСЪК С АРХИВИРАНИ ПЕРИОДИ -->
+
+            <div class="archive-list-header">
+
+                <strong>Архивирани периоди</strong>
+
+                <span id="archiveListInfo">
+                    Няма архиви
+                </span>
+
+            </div>
+
+
+            <div id="archivePeriodsList" class="archive-periods-list">
+
+                <!-- Периодите се зареждат чрез JavaScript -->
+
+            </div>
+
+
+            <!-- СЪОБЩЕНИЕ -->
+
+            <div id="archiveMessage" class="archive-message">
+
+            </div>
+
+
+            <!-- ДОЛНА ЛЕНТА -->
+
+            <div class="archive-footer">
+
+                <button type="button" id="cancelArchiveButton">
+
+                    Затвори
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+</body>
+</html>
