@@ -138,7 +138,18 @@
                             <select id="userSelect" required>
                             <option value="">Изберете потребител...</option>
                         </select>
-                        <img src="images/icons/users.png" class="field-icon" alt="user">
+                        <!-- <img src="images/icons/users.png" class="field-icon" alt="user"> -->
+
+                            <button
+    type="button"
+    class="field-action-button"
+    id="showUserManager"
+    title="Управление на потребители"
+    aria-label="Управление на потребители"
+>
+    <img src="images/icons/users.png" class="field-icon" alt="">
+</button>
+
                         </div>
 
                     </div>
@@ -157,7 +168,20 @@
                             autocomplete="current-password"
                             required
                         >
-                        <img src="images/icons/keys.png" class="field-icon" alt="keys">
+                        <!-- <img src="images/icons/keys.png" class="field-icon" alt="keys"> -->
+
+
+                        <button
+    type="button"
+    class="field-action-button"
+    id="showPasswordChange"
+    title="Смяна на парола"
+    aria-label="Смяна на парола"
+>
+    <img src="images/icons/keys.png" class="field-icon" alt="">
+</button>
+
+
                         </div>
 
                     </div>
@@ -279,8 +303,234 @@
         </section>
 
 
+
+
+<!-- ПРОЗОРЕЦ ЗА УПРАВЛЕНИЕ НА ПОТРЕБИТЕЛИ -->
+<section class="window management-window hidden" id="userManagementWindow">
+
+    <div class="window-title">
+        <span>Управление на потребители</span>
+
+        <button
+            type="button"
+            class="close-button"
+            id="closeUserManager"
+            aria-label="Затвори"
+        >×</button>
+    </div>
+
+    <div class="window-content">
+
+        <div class="management-heading">
+            <strong>Потребителски профили</strong>
+            <p>Изберете профил, за да промените неговите настройки.</p>
+        </div>
+
+        <div class="form-group">
+            <label for="manageUserSelect">Съществуващи потребители:</label>
+
+            <select id="manageUserSelect">
+                <option value="">Изберете потребител...</option>
+            </select>
+        </div>
+
+
+<!-- ИНФОРМАЦИЯ ЗА ИЗБРАНИЯ ПРОФИЛ -->
+<div class="profile-info-panel" id="profileInfoPanel">
+
+    <div class="profile-info-heading">
+        <span>ⓘ</span>
+        Информация за профила
+    </div>
+
+    <div class="profile-info-content">
+
+        <div class="profile-stat">
+            <span>Дата на създаване:</span>
+            <strong id="profileCreatedAt">-</strong>
+        </div>
+
+        <div class="profile-stat">
+            <span>Финансови операции:</span>
+            <strong id="profileRecordCount">0</strong>
+        </div>
+
+        <div class="profile-stat">
+            <span>Сметки:</span>
+            <strong id="profileAccountCount">0</strong>
+        </div>
+
+        <div class="profile-stat">
+            <span>Фондове:</span>
+            <strong id="profileFundCount">0</strong>
+        </div>
+
+        <div class="profile-stat profile-stat-total">
+            <span>Общо обекти:</span>
+            <strong id="profileTotalCount">0</strong>
+        </div>
+
+    </div>
+
+</div>
+
+
+        <div class="form-group">
+            <label for="managedUsername">Потребителско име:</label>
+
+            <input
+                type="text"
+                id="managedUsername"
+                maxlength="30"
+                placeholder="Ново потребителско име"
+                autocomplete="off"
+            >
+        </div>
+
+        <div class="management-actions">
+
+            <button type="button" id="renameManagedUser" class="primary-button">
+                Преименувай
+            </button>
+
+            <button type="button" id="deleteManagedUser">
+                Изтрий профила
+            </button>
+
+        </div>
+
+        <div id="deleteUserConfirm" class="delete-confirm hidden">
+
+            <strong>Потвърждение за изтриване</strong>
+
+            <p id="deleteUserConfirmText">
+                Сигурни ли сте, че искате да изтриете този профил?
+            </p>
+
+            <div class="management-actions">
+                <button type="button" id="confirmDeleteUser" class="danger-button">
+                    Да, изтрий
+                </button>
+
+                <button type="button" id="cancelDeleteUser">
+                    Не
+                </button>
+            </div>
+
+        </div>
+
+        <p id="managementMessage" class="message"></p>
+
+    </div>
+
+    <div class="window-footer">
+        <button type="button" id="closeUserManagerFooter">
+            Затвори
+        </button>
+    </div>
+
+</section>
+
+
+<!-- ПРОЗОРЕЦ ЗА СМЯНА НА ПАРОЛА -->
+<section class="window password-window hidden" id="passwordChangeWindow">
+
+    <div class="window-title">
+        <span>Смяна на парола</span>
+
+        <button
+            type="button"
+            class="close-button"
+            id="closePasswordChange"
+            aria-label="Затвори"
+        >×</button>
+    </div>
+
+    <form id="passwordChangeForm">
+
+        <div class="window-content">
+
+            <div class="management-heading">
+                <strong>Промяна на паролата</strong>
+
+                <p>
+                    За да промените паролата, първо потвърдете старата.
+                </p>
+            </div>
+
+            <div class="selected-user-info">
+                Потребител:
+                <strong id="passwordTargetUser">Няма избран потребител</strong>
+            </div>
+
+            <div class="form-group">
+                <label for="currentPassword">Стара парола:</label>
+
+                <input
+                    type="password"
+                    id="currentPassword"
+                    placeholder="Въведете старата парола"
+                    autocomplete="current-password"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="replacementPassword">Нова парола:</label>
+
+                <input
+                    type="password"
+                    id="replacementPassword"
+                    placeholder="Въведете нова парола"
+                    autocomplete="new-password"
+                    required
+                >
+            </div>
+
+            <div class="form-group">
+                <label for="confirmReplacementPassword">
+                    Повторете новата парола:
+                </label>
+
+                <input
+                    type="password"
+                    id="confirmReplacementPassword"
+                    placeholder="Повторете новата парола"
+                    autocomplete="new-password"
+                    required
+                >
+            </div>
+
+            <p id="passwordChangeMessage" class="message"></p>
+
+        </div>
+
+        <div class="window-footer">
+
+            <button type="submit" class="primary-button">
+                Запази паролата
+            </button>
+
+            <button type="button" id="cancelPasswordChange">
+                Отказ
+            </button>
+
+        </div>
+
+    </form>
+
+</section>
+
+
+
+
+
+
         <footer class="login-footer">
             Финансов организатор · Лична финансова система
+            <br>
+            <br>
+            Версия 1.3
         </footer>
 
     </main>

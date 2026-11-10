@@ -607,3 +607,281 @@ button:active {
     border-bottom: 2px solid #555555 !important;
     filter: drop-shadow(1px 1px 1px rgba(0, 0, 0, 0.4));
 }
+
+
+
+
+
+/* ==========================================
+   LOGIN - INTERACTIVE ICON BUTTONS
+========================================== */
+
+.field-action-button {
+    width: 32px;
+    height: 32px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    flex-shrink: 0;
+
+    margin-left: 5px;
+    padding: 0;
+
+    background: #c0c0c0 !important;
+
+    border-top: 2px solid #ffffff !important;
+    border-left: 2px solid #ffffff !important;
+    border-right: 2px solid #555555 !important;
+    border-bottom: 2px solid #555555 !important;
+}
+
+.field-action-button:hover {
+    background: #d6d6d6 !important;
+}
+
+.field-action-button:active {
+    border-top: 2px solid #555555 !important;
+    border-left: 2px solid #555555 !important;
+    border-right: 2px solid #ffffff !important;
+    border-bottom: 2px solid #ffffff !important;
+}
+
+.field-action-button .field-icon {
+    width: 25px;
+    height: 25px;
+
+    margin: 0;
+
+    border: none !important;
+    filter: none;
+}
+
+
+/* ==========================================
+   USER MANAGEMENT WINDOW
+========================================== */
+
+/* .management-window,
+.password-window {
+    margin-top: 12px;
+} */
+
+
+/* ==========================================
+   FLOATING WINDOWS - WINDOWS 98 DIALOGS
+========================================== */
+
+#createUserWindow,
+#userManagementWindow,
+#passwordChangeWindow {
+
+    position: fixed;
+
+    top: 50%;
+    left: 50%;
+
+    transform: translate(-50%, -50%);
+
+    width: min(440px, calc(100vw - 30px));
+
+    max-height: calc(100vh - 40px);
+
+    overflow-y: auto;
+
+    z-index: 1000;
+
+    margin: 0;
+
+    box-shadow:
+        0 0 0 100vmax rgba(0, 0, 0, 0.28),
+        6px 6px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Малко повече пространство за управлението */
+#userManagementWindow {
+    width: min(460px, calc(100vw - 30px));
+}
+
+/* По-компактен прозорец за паролата */
+#passwordChangeWindow {
+    width: min(410px, calc(100vw - 30px));
+}
+
+/* Скрол при малки екрани */
+#createUserWindow .window-content,
+#userManagementWindow .window-content,
+#passwordChangeWindow .window-content {
+    max-height: calc(100vh - 150px);
+    overflow-y: auto;
+}
+
+
+.management-heading {
+    margin-bottom: 18px;
+}
+
+.management-heading strong {
+    font-size: 14px;
+}
+
+.management-heading p {
+    margin: 6px 0 0;
+
+    font-size: 11px;
+    color: #444;
+}
+
+.management-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+
+    margin-top: 12px;
+}
+
+.management-actions button {
+    min-height: 29px;
+    padding: 5px 10px;
+}
+
+.management-actions .primary-button {
+    font-weight: bold;
+}
+
+.management-actions .danger-button {
+    color: #800000 !important;
+    font-weight: bold;
+}
+
+.delete-confirm {
+    margin-top: 16px;
+    padding: 10px;
+
+    background: #d5d5d5;
+
+    border-top: 2px solid #777;
+    border-left: 2px solid #777;
+    border-right: 2px solid white;
+    border-bottom: 2px solid white;
+}
+
+.delete-confirm strong {
+    font-size: 12px;
+}
+
+.delete-confirm p {
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+.selected-user-info {
+    margin-bottom: 17px;
+    padding: 8px;
+
+    background: #d5d5d5;
+
+    border: 1px solid #999;
+
+    font-size: 11px;
+}
+
+.selected-user-info strong {
+    margin-left: 5px;
+    color: #214f94;
+}
+
+
+/* ==========================================
+   RESPONSIVE MANAGEMENT WINDOWS
+========================================== */
+
+@media (max-width: 500px) {
+
+    .management-actions {
+        flex-direction: column;
+    }
+
+    .management-actions button {
+        width: 100%;
+    }
+
+}
+
+
+
+
+
+
+
+/* ==========================================
+   PROFILE INFORMATION PANEL
+========================================== */
+
+.profile-info-panel {
+    margin: 16px 0;
+
+    background: #d4d4d4;
+
+    border-top: 2px solid #777;
+    border-left: 2px solid #777;
+    border-right: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+}
+
+.profile-info-heading {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    padding: 7px 9px;
+
+    background: #316ac5;
+    color: #ffffff;
+
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.profile-info-content {
+    padding: 9px 10px;
+}
+
+.profile-stat {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+
+    padding: 6px 2px;
+
+    border-bottom: 1px solid #b0b0b0;
+
+    font-size: 11px;
+}
+
+.profile-stat span {
+    color: #333333;
+}
+
+.profile-stat strong {
+    color: #222222;
+    font-size: 11px;
+    text-align: right;
+}
+
+.profile-stat-total {
+    margin-top: 4px;
+    padding-top: 9px;
+
+    border-top: 1px solid #ffffff;
+    border-bottom: none;
+
+    font-weight: bold;
+}
+
+.profile-stat-total strong {
+    color: #214f94;
+    font-size: 13px;
+}

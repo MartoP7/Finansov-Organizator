@@ -407,6 +407,7 @@ textarea:focus {
 }
 
 .button-icon {
+
     font-size: 23px;
     font-weight: bold;
 }
@@ -546,7 +547,7 @@ textarea:focus {
 }
 
 .status-column {
-    width: 65px;
+    width: 32px;
     text-align: center !important;
 }
 
@@ -2408,4 +2409,832 @@ textarea:focus {
     box-shadow:
         inset 1px 1px #888,
         inset -1px -1px #fff;
+}
+
+/* =====================================================
+   ДЕАКТИВИРАНИ БУТОНИ ПРИ АРХИВИРАН ПЕРИОД
+===================================================== */
+
+.toolbar-group button:disabled,
+.toolbar-group button:disabled:hover,
+.toolbar-group button:disabled:active {
+
+    opacity: 0.6;
+
+    filter: grayscale(100%);
+
+    cursor: default;
+
+    background: #d5d5d5;
+
+    border: 1px solid #aaa;
+
+    box-shadow:
+        inset 1px 1px #eeeeee,
+        inset -1px -1px #bbbbbb;
+}
+
+.toolbar-group button:disabled img {
+    opacity: 0.55;
+    filter: grayscale(100%);
+}
+
+
+
+.archive-panel-btn-icon{
+    width: 24px;
+    height: auto;
+    padding-right: 6px;
+}
+.archive-panel-btn-cont{
+    display: flex;
+    align-items: center;
+}
+
+
+
+
+
+
+
+
+/* =====================================================
+   ДОПЪЛНИТЕЛНА СТАТУС ЛЕНТА
+===================================================== */
+
+.user-status-bar {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+
+    width: 100%;
+    min-height: 25px;
+    flex: 0 0 auto;
+
+    padding: 3px 8px;
+
+    background: #e5e5e5;
+    border-top: 1px solid #fff;
+    border-bottom: 1px solid #888;
+
+    color: #333;
+    font-size: 11px;
+}
+
+.user-status-item {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
+}
+
+.user-status-icon {
+    width: 15px;
+    height: 15px;
+    object-fit: contain;
+}
+
+.user-status-divider {
+    height: 14px;
+    border-left: 1px solid #999;
+    border-right: 1px solid #fff;
+}
+
+.storage-indicator {
+    width: 8px;
+    height: 8px;
+    background: #159b25;
+    border: 1px solid #176b20;
+    border-radius: 50%;
+}
+
+
+/* =====================================================
+   БУТОНИ В ХЕДЪРА
+===================================================== */
+
+.header-feature-icon {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    vertical-align: middle;
+    margin-right: 4px;
+}
+
+
+/* =====================================================
+   ИНСТРУМЕНТИ
+===================================================== */
+
+.tools-dialog {
+    width: 850px;
+    max-width: calc(100vw - 30px);
+}
+
+.tools-content {
+    padding: 10px;
+}
+
+.tools-layout {
+    display: flex;
+    min-height: 400px;
+    border: 1px solid #888;
+    background: #c0c0c0;
+}
+
+
+/* ЛЯВО МЕНЮ */
+
+.tools-navigation {
+    display: flex;
+    flex: 0 0 205px;
+    flex-direction: column;
+    gap: 3px;
+
+    padding: 8px;
+
+    background: #d5d5d5;
+    border-right: 1px solid #888;
+}
+
+.tools-navigation-title {
+    padding: 5px;
+    margin-bottom: 5px;
+
+    border-bottom: 1px solid #aaa;
+
+    font-weight: bold;
+    font-size: 11px;
+}
+
+.tool-nav-button {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    width: 100%;
+    min-height: 43px;
+    padding: 5px 7px;
+
+    text-align: left;
+
+    background: #dedede;
+    border: 1px solid #aaa;
+    border-radius: 0;
+
+    box-shadow: inset 1px 1px #fff;
+    filter: drop-shadow(2px 2px 2px rgba(0, 0, 0, 0.6));
+    cursor: pointer;
+}
+
+.tool-nav-button img {
+    width: 25px;
+    height: 25px;
+    object-fit: contain;
+    flex: 0 0 25px;
+}
+
+.tool-nav-button:hover {
+    background: #eee;
+}
+
+.tool-nav-button.active {
+    color: #fff;
+    background: #316ac5;
+    border-color: #1d4f9c;
+}
+
+
+/* ДЯСНА РАБОТНА ОБЛАСТ */
+
+.tools-workspace {
+    flex: 1;
+    min-width: 0;
+    padding: 15px;
+    background: #eee;
+}
+
+.tool-panel[hidden] {
+    display: none !important;
+}
+
+.tool-panel h3 {
+    margin: 0 0 9px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #aaa;
+    font-size: 15px;
+}
+
+.tool-panel p {
+    color: #555;
+    line-height: 1.5;
+}
+
+.tool-form {
+    display: grid;
+    grid-template-columns: 150px minmax(120px, 1fr);
+    align-items: center;
+    gap: 9px;
+
+    max-width: 500px;
+    padding: 12px;
+
+    background: #e0e0e0;
+    border: 1px solid #aaa;
+    box-shadow: inset 1px 1px #fff;
+}
+
+.tool-form h4,
+.tool-form .tool-output,
+.tool-form .tool-note,
+.tool-form .tool-separator,
+.tool-form button {
+    grid-column: 1 / -1;
+}
+
+.tool-form input,
+.tool-form select {
+    width: 100%;
+    min-width: 0;
+    height: 27px;
+    padding: 4px 6px;
+    border: 1px solid #888;
+    border-radius: 0;
+    background: #fff;
+}
+
+.tool-form button {
+    justify-self: start;
+    min-height: 29px;
+    padding: 5px 12px;
+
+    background: #dedede;
+    border: 1px solid #888;
+    border-radius: 0;
+
+    box-shadow:
+        inset 1px 1px #fff,
+        inset -1px -1px #999;
+}
+
+.tool-form button:active {
+    box-shadow:
+        inset 1px 1px #888,
+        inset -1px -1px #fff;
+}
+
+.tool-output {
+    min-height: 32px;
+    padding: 8px;
+
+    background: #fff;
+    border: 1px inset #aaa;
+
+    font-weight: bold;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+}
+
+.tool-output-large {
+    font-size: 15px;
+}
+
+.tool-note {
+    font-size: 11px;
+    color: #555;
+}
+
+.tool-separator {
+    height: 1px;
+    background: #aaa;
+    border-bottom: 1px solid #fff;
+    margin: 8px 0;
+}
+
+
+/* ОСНОВЕН КАЛКУЛАТОР */
+
+.basic-calculator {
+    width: 270px;
+    max-width: 100%;
+    margin: 15px auto;
+    padding: 12px;
+
+    background: #d2d2d2;
+    border: 1px solid #888;
+    box-shadow: inset 1px 1px #fff;
+}
+
+#basicCalcDisplay {
+    width: 100%;
+    height: 42px;
+    margin-bottom: 9px;
+    padding: 5px;
+
+    text-align: right;
+    font-size: 20px;
+    font-weight: bold;
+
+    background: #fff;
+    border: 1px solid #888;
+}
+
+.calc-keypad {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 5px;
+}
+
+.calc-keypad button {
+    height: 39px;
+
+    background: #e8e8e8;
+    border: 1px solid #888;
+    border-radius: 0;
+
+    box-shadow:
+        inset 1px 1px #fff,
+        inset -1px -1px #999;
+
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.calc-keypad button:active {
+    box-shadow:
+        inset 1px 1px #888,
+        inset -1px -1px #fff;
+}
+
+.calc-keypad .calc-wide {
+    grid-column: 1 / -1;
+    height: 32px;
+    font-size: 12px;
+}
+
+
+/* =====================================================
+   НАРЪЧНИК
+===================================================== */
+
+.manual-dialog {
+    width: 950px;
+    max-width: calc(100vw - 30px);
+}
+
+.manual-layout {
+    display: flex;
+    min-height: 500px;
+    max-height: calc(100vh - 125px);
+    overflow: hidden;
+    background: #c0c0c0;
+}
+
+
+/* ДЪРВОВИДНО МЕНЮ */
+
+.manual-navigation {
+    flex: 0 0 245px;
+    padding: 8px 7px;
+    overflow-y: auto;
+
+    background: #d5d5d5;
+    border-right: 1px solid #888;
+}
+
+.manual-navigation-title {
+    padding: 5px 6px 9px;
+    margin-bottom: 7px;
+
+    border-bottom: 1px solid #aaa;
+
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.manual-tree-group {
+    margin-bottom: 5px;
+}
+
+.manual-group-toggle {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    width: 100%;
+    min-height: 29px;
+    padding: 5px 6px;
+
+    text-align: left;
+
+    background: transparent;
+    border: 1px solid transparent;
+
+    font-weight: bold;
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+.manual-group-toggle:hover {
+    background: #e5e5e5;
+    border-color: #aaa;
+}
+
+.manual-tree-arrow {
+    width: 12px;
+    font-size: 9px;
+}
+
+.manual-group-toggle[aria-expanded="false"] .manual-tree-arrow {
+    transform: rotate(-90deg);
+}
+
+.manual-subtopics {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+
+    padding-left: 17px;
+    margin-left: 11px;
+
+    border-left: 1px dotted #999;
+}
+
+.manual-subtopics.collapsed {
+    display: none;
+}
+
+.manual-topic {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+
+    width: 100%;
+    min-height: 29px;
+    padding: 4px 6px;
+
+    text-align: left;
+
+    background: transparent;
+    border: 1px solid transparent;
+
+    font-size: 11px;
+
+    cursor: pointer;
+}
+
+.manual-topic img {
+    width: 16px;
+    height: 16px;
+    object-fit: contain;
+    flex: 0 0 16px;
+}
+
+.manual-topic:hover {
+    background: #e9e9e9;
+    border-color: #aaa;
+}
+
+.manual-topic.active {
+    color: #fff;
+    background: #316ac5;
+    border-color: #1d4f9c;
+}
+
+
+/* СЪДЪРЖАНИЕ */
+
+.manual-article {
+    flex: 1;
+    min-width: 0;
+    padding: 20px 24px;
+    overflow-y: auto;
+
+    background: #fff;
+    color: #252525;
+
+    font-size: 12px;
+    line-height: 1.65;
+}
+
+.manual-article h2 {
+    margin: 0 0 12px;
+    padding-bottom: 10px;
+
+    border-bottom: 2px solid #316ac5;
+
+    color: #234f8d;
+    font-size: 19px;
+}
+
+.manual-article h3 {
+    margin: 20px 0 7px;
+    padding-left: 8px;
+
+    border-left: 3px solid #316ac5;
+
+    font-size: 14px;
+}
+
+.manual-article p {
+    margin: 9px 0;
+}
+
+.manual-article ul,
+.manual-article ol {
+    padding-left: 23px;
+}
+
+.manual-article li {
+    margin: 6px 0;
+}
+
+.manual-article .manual-lead {
+    margin: 13px 0 17px;
+    padding: 12px 14px;
+
+    background: #edf3fc;
+    border: 1px solid #c3d4ed;
+    border-left: 4px solid #316ac5;
+}
+
+.manual-article .manual-info {
+    margin: 14px 0;
+    padding: 10px 12px;
+
+    background: #f2f2f2;
+    border: 1px solid #bbb;
+    box-shadow: inset 1px 1px #fff;
+}
+
+.manual-article .manual-warning {
+    margin: 14px 0;
+    padding: 10px 12px;
+
+    background: #fff8e5;
+    border: 1px solid #d6bd7b;
+    border-left: 4px solid #c69a27;
+}
+
+.manual-article figure {
+    margin: 16px 0;
+    padding: 8px;
+
+    background: #f1f1f1;
+    border: 1px solid #bbb;
+}
+
+.manual-article figure img {
+    display: block;
+    width: 100%;
+    max-height: 220px;
+    object-fit: contain;
+}
+
+.manual-article figcaption {
+    padding-top: 7px;
+    text-align: center;
+    color: #555;
+    font-size: 11px;
+    font-style: italic;
+}
+
+.manual-welcome {
+    max-width: 550px;
+    margin: 25px auto;
+    text-align: center;
+}
+
+.manual-welcome img {
+    width: 150px;
+    height: 130px;
+    object-fit: contain;
+    padding: 10px;
+
+    background: #eee;
+    border: 1px solid #aaa;
+}
+
+.manual-welcome h2 {
+    text-align: center;
+}
+
+
+/* АДАПТИВНОСТ */
+
+@media (max-width: 700px) {
+
+    .manual-navigation {
+        flex-basis: 175px;
+    }
+
+    .manual-article {
+        padding: 12px;
+    }
+
+    .tools-layout {
+        flex-direction: column;
+    }
+
+    .tools-navigation {
+        flex: none;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .tools-navigation-title {
+        grid-column: 1 / -1;
+    }
+
+}
+
+
+
+
+
+
+/* ==========================================
+   АВТОМАТИЧНИ ВАЛУТНИ КУРСОВЕ
+========================================== */
+
+.currency-rate-info {
+    padding: 8px;
+    margin: 5px 0;
+
+    background: #e5e5e5;
+    border: 1px solid #999;
+
+    color: #333;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+#refreshCurrencyRatesButton {
+    margin-top: 5px;
+}
+
+
+
+
+/* ==========================================
+   ФИКСИРАНИ РАЗМЕРИ НА ИНСТРУМЕНТИ И НАРЪЧНИК
+========================================== */
+
+/* Общи настройки за двата прозореца */
+#toolsDialog,
+#manualDialog {
+    display: none;
+    flex-direction: column;
+
+    padding: 0;
+    margin: auto;
+
+    overflow: hidden;
+
+    max-height: calc(100vh - 40px);
+    box-sizing: border-box;
+}
+
+/* Показване на прозорците */
+#toolsDialog[open],
+#manualDialog[open] {
+    display: flex;
+}
+
+/* ==========================================
+   ПРОЗОРЕЦ ИНСТРУМЕНТИ
+========================================== */
+
+#toolsDialog {
+    width: 900px;
+    height: 680px;
+
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 40px);
+}
+
+#toolsDialog .dialog-header {
+    flex: 0 0 auto;
+}
+
+#toolsDialog .tools-content {
+    flex: 1 1 auto;
+    min-height: 0;
+
+    display: flex;
+    flex-direction: column;
+
+    overflow: hidden;
+}
+
+#toolsDialog .tools-layout {
+    flex: 1 1 auto;
+
+    height: 100%;
+    min-height: 0;
+
+    display: flex;
+    overflow: hidden;
+}
+
+#toolsDialog .tools-navigation {
+    flex: 0 0 205px;
+    min-height: 0;
+
+    overflow-y: auto;
+}
+
+#toolsDialog .tools-workspace {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* ==========================================
+   ПРОЗОРЕЦ НАРЪЧНИК
+========================================== */
+
+#manualDialog {
+    width: 1050px;
+    height: 750px;
+
+    max-width: calc(100vw - 40px);
+    max-height: calc(100vh - 40px);
+}
+
+#manualDialog .dialog-header {
+    flex: 0 0 auto;
+}
+
+#manualDialog .manual-layout {
+    flex: 1 1 auto;
+
+    height: 100%;
+    min-height: 0;
+    max-height: none;
+
+    display: flex;
+    overflow: hidden;
+}
+
+#manualDialog .manual-navigation {
+    flex: 0 0 220px;
+    min-height: 0;
+
+    overflow-y: auto;
+}
+
+#manualDialog .manual-article {
+    flex: 1 1 auto;
+    min-width: 0;
+    min-height: 0;
+
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+/* Снимките не могат да разширяват прозореца */
+#manualDialog .manual-article img {
+    max-width: 100%;
+    height: auto;
+    object-fit: contain;
+}
+
+/* ==========================================
+   ПО-МАЛКИ ЕКРАНИ
+========================================== */
+
+@media (max-width: 700px) {
+
+    #toolsDialog,
+    #manualDialog {
+        width: calc(100vw - 20px);
+        height: calc(100vh - 30px);
+
+        max-width: none;
+        max-height: none;
+    }
+
+    #toolsDialog .tools-layout,
+    #manualDialog .manual-layout {
+        flex-direction: column;
+    }
+
+    #toolsDialog .tools-navigation,
+    #manualDialog .manual-navigation {
+        flex: 0 0 auto;
+        max-height: 150px;
+
+        overflow-y: auto;
+    }
+
+    #toolsDialog .tools-workspace,
+    #manualDialog .manual-article {
+        flex: 1 1 auto;
+        min-height: 0;
+    }
 }

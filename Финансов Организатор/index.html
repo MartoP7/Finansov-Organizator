@@ -125,6 +125,24 @@
             <span>🖬</span> Резервно копие
         </button>
 
+        <button type="button" id="toolsButton" class="header-button">
+    <!-- <img src="images/icons/tools.png" alt="" class="header-feature-icon"> -->
+    🛠 Инструменти
+</button>
+
+<button type="button" id="manualButton" class="header-button">
+    <!-- <img src="images/icons/book.png" alt="" class="header-feature-icon"> -->
+     <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Външен кръг -->
+  <circle cx="12" cy="12" r="10"/>
+  <!-- Контур на въпросителния знак -->
+  <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+  <!-- Точка отдолу -->
+  <line x1="12" y1="17" x2="12.01" y2="17"/>
+</svg>
+    Наръчник
+</button>
+
         <button type="button" id="logoutButton" class="logout-button">
             ↩ Изход
         </button>
@@ -411,11 +429,51 @@
                     Валута: EUR (€)
                 </span>
                 <span class="status-right">
-                    Версия: 1.2
+                    Версия: 1.3
                 </span>
                 </div>
 
-            </footer>
+                        </footer>
+
+            <!-- ДОПЪЛНИТЕЛНА ИНФОРМАЦИОННА ЛЕНТА -->
+            <div class="user-status-bar">
+
+                <div class="user-status-item">
+
+                    <img
+                        src="images/icons/user.png"
+                        alt=""
+                        class="user-status-icon">
+
+                    <span>Потребител:</span>
+
+                    <strong id="currentUserName">Зареждане...</strong>
+
+                </div>
+
+                <span class="user-status-divider"></span>
+
+                <div class="user-status-item">
+
+                    <span>Дата:</span>
+
+                    <strong id="currentDateDisplay">--.--.----</strong>
+
+                </div>
+
+                <span class="user-status-divider"></span>
+
+                <div class="user-status-item">
+
+                    <span class="storage-indicator"></span>
+
+                    <span>Съхранение:</span>
+
+                    <strong>Локално в браузъра</strong>
+
+                </div>
+
+            </div>
 
         </section>
 
@@ -1405,8 +1463,8 @@
         <div class="archive-titlebar">
 
             <span>
-                <img src="images/icons/lock.png" alt=""
-                     class="archive-title-icon">
+                <!-- <img src="images/icons/lock.png" alt=""
+                     class="archive-title-icon"> -->
                 Архив на финансовите периоди
             </span>
 
@@ -1506,6 +1564,479 @@
     </div>
 
 </div>
+
+
+
+
+
+
+
+<!-- ========================================= -->
+<!-- ПРОЗОРЕЦ: ИНСТРУМЕНТИ -->
+<!-- ========================================= -->
+
+<dialog id="toolsDialog" class="app-dialog tools-dialog">
+
+    <div class="dialog-header">
+        <span>Полезни инструменти</span>
+        <button type="button" class="dialog-close" data-close="toolsDialog">✕</button>
+    </div>
+
+    <div class="tools-content">
+
+        <div class="tools-layout">
+
+            <aside class="tools-navigation">
+
+                <div class="tools-navigation-title">КАЛКУЛАТОРИ</div>
+
+                <button type="button" class="tool-nav-button active" data-tool="basicCalculator">
+                    <img src="images/icons/tools/calculator.png" alt="">
+                    <span>Основен калкулатор</span>
+                </button>
+
+                <button type="button" class="tool-nav-button" data-tool="currencyCalculator">
+                    <img src="images/icons/tools/currency.png" alt="">
+                    <span>Валутен конвертор</span>
+                </button>
+
+                <button type="button" class="tool-nav-button" data-tool="percentCalculator">
+                    <img src="images/icons/tools/percent.png" alt="">
+                    <span>Калкулатор за проценти</span>
+                </button>
+
+                <button type="button" class="tool-nav-button" data-tool="savingsCalculator">
+                    <img src="images/icons/tools/savings.png" alt="">
+                    <span>Спестявания</span>
+                </button>
+
+                <button type="button" class="tool-nav-button" data-tool="budgetCalculator">
+                    <img src="images/icons/tools/budget.png" alt="">
+                    <span>Бюджетен калкулатор</span>
+                </button>
+
+            </aside>
+
+            <main class="tools-workspace">
+
+                <!-- ОСНОВЕН КАЛКУЛАТОР -->
+
+                <section class="tool-panel active" id="basicCalculator">
+
+                    <h3>Основен калкулатор</h3>
+
+                    <p>Калкулатор за основни математически операции.</p>
+
+                    <div class="basic-calculator">
+
+                        <input id="basicCalcDisplay" type="text" value="0" readonly>
+
+                        <div class="calc-keypad">
+
+                            <button type="button" data-calc="7">7</button>
+                            <button type="button" data-calc="8">8</button>
+                            <button type="button" data-calc="9">9</button>
+                            <button type="button" data-calc="/">÷</button>
+
+                            <button type="button" data-calc="4">4</button>
+                            <button type="button" data-calc="5">5</button>
+                            <button type="button" data-calc="6">6</button>
+                            <button type="button" data-calc="*">×</button>
+
+                            <button type="button" data-calc="1">1</button>
+                            <button type="button" data-calc="2">2</button>
+                            <button type="button" data-calc="3">3</button>
+                            <button type="button" data-calc="-">−</button>
+
+                            <button type="button" data-calc="0">0</button>
+                            <button type="button" data-calc=".">.</button>
+                            <button type="button" id="calcEquals">=</button>
+                            <button type="button" data-calc="+">+</button>
+
+                            <button type="button" id="calcClear" class="calc-wide">
+                                Изчисти
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- ВАЛУТЕН КОНВЕРТОР -->
+
+                
+<!-- ВАЛУТЕН КОНВЕРТОР -->
+
+<section class="tool-panel" id="currencyCalculator" hidden>
+
+    <h3>Валутен конвертор</h3>
+
+    <p>Преобразуване на валути с автоматично зареждани курсове.</p>
+
+    <div class="tool-form">
+
+        <label for="currencyAmount">Сума:</label>
+        <input
+            id="currencyAmount"
+            type="number"
+            min="0"
+            step="any"
+            value="1"
+        >
+
+        <label for="currencyFrom">От валута:</label>
+        <select id="currencyFrom">
+            <option value="EUR">EUR (€)</option>
+            <option value="BGN">BGN (лв.)</option>
+            <option value="USD">USD ($)</option>
+            <option value="GBP">GBP (£)</option>
+            <option value="CHF">CHF</option>
+        </select>
+
+        <label for="currencyTo">Към валута:</label>
+        <select id="currencyTo">
+            <option value="USD">USD ($)</option>
+            <option value="EUR">EUR (€)</option>
+            <option value="BGN">BGN (лв.)</option>
+            <option value="GBP">GBP (£)</option>
+            <option value="CHF">CHF</option>
+        </select>
+
+        <div class="currency-rate-info" id="currencyRateInfo">
+            Зареждане на валутните курсове...
+        </div>
+
+        <button type="button" id="convertCurrencyButton">
+            <div class="archive-panel-btn-cont">
+                <img src="images/icons/convert.png" class="archive-panel-btn-icon" alt="convert">
+            Преобразувай
+            </div>
+        </button>
+
+        <button type="button" id="refreshCurrencyRatesButton">
+            <div class="archive-panel-btn-cont">
+                <img src="images/icons/refresh.PNG" class="archive-panel-btn-icon" alt="refresh">
+            Обнови курсовете
+            </div>
+        </button>
+
+        <div class="tool-output" id="currencyResult">
+            Въведи сума и избери валути.
+        </div>
+
+        <p class="tool-note">
+            Курсовете се зареждат автоматично от Frankfurter
+            с данни от Европейската централна банка.
+            BGN използва фиксирания курс 1 EUR = 1.95583 BGN.
+        </p>
+
+    </div>
+
+</section>
+
+
+
+                <!-- ПРОЦЕНТИ -->
+
+                <section class="tool-panel" id="percentCalculator" hidden>
+
+                    <h3>Калкулатор за проценти</h3>
+
+                    <div class="tool-form">
+
+                        <h4>Процент от сума</h4>
+
+                        <label for="percentBase">Основна сума:</label>
+                        <input id="percentBase" type="number" step="any">
+
+                        <label for="percentValue">Процент:</label>
+                        <input id="percentValue" type="number" step="any">
+
+                        <button type="button" id="calculatePercentButton">
+                            <div class="archive-panel-btn-cont">
+                            <img src="images/icons/calc.png" class="archive-panel-btn-icon" alt="calc">
+                            Изчисли
+                            </div>
+                        </button>
+
+                        <div class="tool-output" id="percentResult">
+                            Резултатът ще се покаже тук.
+                        </div>
+
+                        <div class="tool-separator"></div>
+
+                        <h4>Какъв процент представлява дадена сума?</h4>
+
+                        <label for="percentPart">Част от сумата:</label>
+                        <input id="percentPart" type="number" step="any">
+
+                        <button type="button" id="calculateShareButton">
+                            <div class="archive-panel-btn-cont">
+                                <img src="images/icons/calcP.png" class="archive-panel-btn-icon" alt="calcP">
+                                Изчисли процента
+                            </div>
+                        </button>
+
+                        <div class="tool-output" id="shareResult">
+                            Резултатът ще се покаже тук.
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- СПЕСТЯВАНИЯ -->
+
+                <section class="tool-panel" id="savingsCalculator" hidden>
+
+                    <h3>Калкулатор за спестявания</h3>
+
+                    <div class="tool-form">
+
+                        <label for="savingStart">Начална сума (€):</label>
+                        <input id="savingStart" type="number" min="0" step="any" value="0">
+
+                        <label for="savingMonthly">Месечна вноска (€):</label>
+                        <input id="savingMonthly" type="number" min="0" step="any" value="50">
+
+                        <label for="savingMonths">Брой месеци:</label>
+                        <input id="savingMonths" type="number" min="0" step="1" value="12">
+
+                        <button type="button" id="calculateSavingsButton">
+                            <div class="archive-panel-btn-cont">
+                            <img src="images/icons/calc.png" class="archive-panel-btn-icon" alt="calc">
+                            Изчисли
+                            </div>
+                        </button>
+
+                        <div class="tool-output tool-output-large" id="savingsResult">
+                            Очаквана сума: --
+                        </div>
+
+                        <p class="tool-note">
+                            Изчислението не включва лихва или доходност.
+                        </p>
+
+                    </div>
+
+                </section>
+
+
+                <!-- БЮДЖЕТ -->
+
+                <section class="tool-panel" id="budgetCalculator" hidden>
+
+                    <h3>Бюджетен калкулатор</h3>
+
+                    <div class="tool-form">
+
+                        <label for="budgetIncome">Месечен доход (€):</label>
+                        <input id="budgetIncome" type="number" min="0" step="any">
+
+                        <label for="budgetFixed">Постоянни разходи (€):</label>
+                        <input id="budgetFixed" type="number" min="0" step="any">
+
+                        <label for="budgetOther">Други разходи (€):</label>
+                        <input id="budgetOther" type="number" min="0" step="any">
+
+                        <button type="button" id="calculateBudgetButton">
+                            <div class="archive-panel-btn-cont">
+                            <img src="images/icons/calc.png" class="archive-panel-btn-icon" alt="calc">
+                            Изчисли
+                            </div>
+                        </button>
+
+                        <div class="tool-output tool-output-large" id="budgetResult">
+                            Оставащи средства: --
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </main>
+
+        </div>
+
+    </div>
+
+    <div class="dialog-footer">
+        <button type="button" data-close="toolsDialog">Затвори</button>
+    </div>
+
+</dialog>
+
+
+<!-- ========================================= -->
+<!-- ПРОЗОРЕЦ: НАРЪЧНИК -->
+<!-- ========================================= -->
+
+<dialog id="manualDialog" class="app-dialog manual-dialog">
+
+    <div class="dialog-header">
+        <span>Наръчник – Финансов организатор</span>
+        <button type="button" class="dialog-close" data-close="manualDialog">✕</button>
+    </div>
+
+    <div class="manual-layout">
+
+        <nav class="manual-navigation">
+
+            <div class="manual-navigation-title">СЪДЪРЖАНИЕ</div>
+
+            <div class="manual-tree-group">
+
+                <button type="button" class="manual-group-toggle" aria-expanded="true">
+                    <span class="manual-tree-arrow">▼</span>
+                    Основи на приложението
+                </button>
+
+                <div class="manual-subtopics">
+
+                    <button type="button" class="manual-topic active" data-topic="intro">
+                        <img src="images/icons/book.png" alt="">
+                        За приложението
+                    </button>
+
+                    <button type="button" class="manual-topic" data-topic="interface">
+                        <img src="images/icons/book.png" alt="">
+                        Начална страница
+                    </button>
+
+                    <button type="button" class="manual-topic" data-topic="profiles">
+                        <img src="images/icons/book.png" alt="">
+                        Потребителски профили
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="manual-tree-group">
+
+                <button type="button" class="manual-group-toggle" aria-expanded="true">
+                    <span class="manual-tree-arrow">▼</span>
+                    Финансово управление
+                </button>
+
+                <div class="manual-subtopics">
+
+                    <button type="button" class="manual-topic" data-topic="periods">
+                        <img src="images/icons/book.png" alt="">
+                        Години и месеци
+                    </button>
+
+                    <button type="button" class="manual-topic" data-topic="records">
+                        <img src="images/icons/book.png" alt="">
+                        Финансови операции
+                    </button>
+
+                    <button type="button" class="manual-topic" data-topic="accounts">
+                        <img src="images/icons/book.png" alt="">
+                        Сметки
+                    </button>
+
+                    <button type="button" class="manual-topic" data-topic="funds">
+                        <img src="images/icons/book.png" alt="">
+                        Фондове
+                    </button>
+
+                    <button type="button" class="manual-topic" data-topic="overview">
+                        <img src="images/icons/book.png" alt="">
+                        Финансово обобщение
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="manual-tree-group">
+
+                <button type="button" class="manual-group-toggle" aria-expanded="true">
+                    <span class="manual-tree-arrow">▼</span>
+                    Архиви и данни
+                </button>
+
+                <div class="manual-subtopics">
+
+                    <button type="button" class="manual-topic" data-topic="archives">
+                        <img src="images/icons/book.png" alt="">
+                        Архивиране и отчети
+                    </button>
+
+                    <button type="button" class="manual-topic" data-topic="backup">
+                        <img src="images/icons/book.png" alt="">
+                        Резервни копия
+                    </button>
+
+                    <button type="button" class="manual-topic" data-topic="storage">
+                        <img src="images/icons/book.png" alt="">
+                        Съхранение на данните
+                    </button>
+
+                </div>
+
+            </div>
+
+
+            <div class="manual-tree-group">
+
+                <button type="button" class="manual-group-toggle" aria-expanded="true">
+                    <span class="manual-tree-arrow">▼</span>
+                    Допълнителни функции
+                </button>
+
+                <div class="manual-subtopics">
+
+                    <button type="button" class="manual-topic" data-topic="tools">
+                        <img src="images/icons/book.png" alt="">
+                        Инструменти
+                    </button>
+
+                    <button type="button" class="manual-topic" data-topic="status">
+                        <img src="images/icons/book.png" alt="">
+                        Статус лента
+                    </button>
+
+                </div>
+
+            </div>
+
+        </nav>
+
+
+        <article class="manual-article" id="manualArticle" aria-live="polite">
+
+            <div class="manual-welcome">
+
+                <img src="images/manual/manual-cover.png" alt="Наръчник">
+
+                <h2>Добре дошъл в наръчника!</h2>
+
+                <p>
+                    Избери тема от менюто вляво, за да прочетеш
+                    повече за съответната функция.
+                </p>
+
+            </div>
+
+        </article>
+
+    </div>
+
+    <div class="dialog-footer">
+        <button type="button" data-close="manualDialog">Затвори</button>
+    </div>
+
+</dialog>
+
+
+
 
 
 </body>

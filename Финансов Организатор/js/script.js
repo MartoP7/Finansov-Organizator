@@ -243,7 +243,51 @@ function getYearObject(year) {
     return data.years.find(item => item.year === Number(year));
 }
 
+function isSelectedPeriodArchived() {
 
+    if (selectedYear === null || selectedMonth === null) {
+        return false;
+    }
+
+    const yearObject = getYearObject(selectedYear);
+
+    if (!yearObject) {
+        return false;
+    }
+
+    // Ако цялата година е архивирана
+    if (yearObject.archived === true) {
+        return true;
+    }
+
+    // Ако конкретният месец е архивиран
+    return Array.isArray(yearObject.archivedMonths) &&
+        yearObject.archivedMonths.includes(Number(selectedMonth));
+}
+
+
+function updateRecordToolbarState() {
+
+    const isArchived = isSelectedPeriodArchived();
+
+    const buttonIds = [
+        "activateRecordButton",
+        "deactivateRecordButton",
+        "addRecordButton",
+        "editRecordButton",
+        "deleteRecordButton"
+    ];
+
+    buttonIds.forEach(id => {
+
+        const button = document.getElementById(id);
+
+        if (button) {
+            button.disabled = isArchived;
+        }
+
+    });
+}
 
 function getSelectedPeriodRecords() {
 
@@ -1343,21 +1387,30 @@ function renderArchiveDetails() {
 
             <div>
                 <h3>${escapeHTML(period.name)}</h3>
-                <p>Подробен финансов отчет на архивирания период</p>
+                <p>Подробен финансов отчет на периода</p>
             </div>
 
             <div class="archive-detail-actions">
 
                 <button type="button" id="archiveExportCSV">
-                    Експорт CSV
+                    <div class="archive-panel-btn-cont">
+                        <img src="images/icons/csv.png" class="archive-panel-btn-icon">
+                        Експорт CSV
+                    </div>
                 </button>
 
                 <button type="button" id="archiveExportPDF">
-                    Експорт PDF
+                <div class="archive-panel-btn-cont">
+                        <img src="images/icons/pdf.png" class="archive-panel-btn-icon">
+                        Експорт PDF
+                    </div>
                 </button>
 
                 <button type="button" id="archiveRestoreButton">
-                    Възстановяване
+                    <div class="archive-panel-btn-cont">
+                        <img src="images/icons/refresh.png" class="archive-panel-btn-icon">
+                        Възстановяване
+                    </div>
                 </button>
 
             </div>
@@ -1499,7 +1552,10 @@ function renderArchiveDetails() {
                 </select>
 
                 <button type="button" id="archiveCompareButton">
-                    Сравни
+                    <div class="archive-panel-btn-cont">
+                        <img src="images/icons/compare.png" class="archive-panel-btn-icon">
+                        Сравни
+                    </div>
                 </button>
 
             </div>
@@ -4623,6 +4679,8 @@ function renderAll() {
     populateFilterOptions();
 
     updateRecordTypeFields();
+
+    updateRecordToolbarState();
 }
 
 
@@ -4888,18 +4946,1222 @@ document.addEventListener("keydown", event => {
    22. СТАРТИРАНЕ НА ПРИЛОЖЕНИЕТО
 ===================================================== */
 
+// function initializeApplication() {
+
+//     createRemoveMonthButton();
+
+//     initializeEvents();
+
+//     renderAll();
+
+//     saveData();
+
+//     setStatus("Финансов организатор е готов за работа.");
+// }
+
+
+
+
+/* =====================================================
+   ДОПЪЛНИТЕЛНИ ФУНКЦИИ
+   ИНСТРУМЕНТИ, НАРЪЧНИК И СТАТУС ЛЕНТА
+===================================================== */
+
+
+/* =====================================================
+   1. ИНФОРМАЦИОННА СТАТУС ЛЕНТА
+===================================================== */
+
+function updateUserStatusBar() {
+
+    const userNameElement =
+        document.getElementById("currentUserName");
+
+    const dateElement =
+        document.getElementById("currentDateDisplay");
+
+    if (userNameElement) {
+        userNameElement.textContent =
+            currentUser.username || "Потребител";
+    }
+
+    if (dateElement) {
+
+        dateElement.textContent =
+            new Date().toLocaleDateString("bg-BG", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric"
+            });
+
+    }
+
+}
+
+
+/* =====================================================
+   2. БЕЗОПАСНО ИЗЧИСЛЯВАНЕ НА МАТЕМАТИЧЕСКИ ИЗРАЗИ
+===================================================== */
+
+function evaluateCalculatorExpression(expression) {
+
+    const tokens = expression.match(
+        /(?:\d+\.?\d*|\.\d+)|[+\-*/]/g
+    );
+
+    if (!tokens || tokens.join("") !== expression.replace(/\s/g, "")) {
+        throw new Error("Невалиден израз");
+    }
+
+    const output = [];
+    const operators = [];
+
+    const precedence = {
+        "+": 1,
+        "-": 1,
+        "*": 2,
+        "/": 2
+    };
+
+    let expectingNumber = true;
+
+    tokens.forEach(token => {
+
+        if (!isNaN(Number(token))) {
+
+            if (!expectingNumber) {
+                throw new Error("Невалиден израз");
+            }
+
+            output.push(Number(token));
+            expectingNumber = false;
+
+        } else {
+
+            if (expectingNumber) {
+
+                if (token === "-") {
+                    output.push(0);
+                } else {
+                    throw new Error("Невалиден израз");
+                }
+
+            }
+
+            while (
+                operators.length &&
+                precedence[operators[operators.length - 1]] >= precedence[token]
+            ) {
+
+                output.push(operators.pop());
+
+            }
+
+            operators.push(token);
+            expectingNumber = true;
+
+        }
+
+    });
+
+    if (expectingNumber) {
+        throw new Error("Невалиден израз");
+    }
+
+    while (operators.length) {
+        output.push(operators.pop());
+    }
+
+    const stack = [];
+
+    output.forEach(token => {
+
+        if (typeof token === "number") {
+
+            stack.push(token);
+            return;
+
+        }
+
+        const b = stack.pop();
+        const a = stack.pop();
+
+        if (a === undefined || b === undefined) {
+            throw new Error("Невалиден израз");
+        }
+
+        let result;
+
+        switch (token) {
+
+            case "+":
+                result = a + b;
+                break;
+
+            case "-":
+                result = a - b;
+                break;
+
+            case "*":
+                result = a * b;
+                break;
+
+            case "/":
+
+                if (b === 0) {
+                    throw new Error("Деление на нула");
+                }
+
+                result = a / b;
+                break;
+
+        }
+
+        stack.push(result);
+
+    });
+
+    if (stack.length !== 1 || !Number.isFinite(stack[0])) {
+        throw new Error("Невалиден резултат");
+    }
+
+    return stack[0];
+
+}
+
+
+
+
+
+/* =====================================================
+   АВТОМАТИЧНИ ВАЛУТНИ КУРСОВЕ
+===================================================== */
+
+const CURRENCY_CACHE_KEY =
+    "financialOrganizerCurrencyRates_v1";
+
+
+async function loadCurrencyRates() {
+
+    const info =
+        document.getElementById("currencyRateInfo");
+
+    if (info) {
+        info.textContent = "Зареждане на валутните курсове...";
+    }
+
+    try {
+
+        const url = new URL(
+            "https://api.frankfurter.dev/v2/providers/ecb/rates"
+        );
+
+        url.search = new URLSearchParams({
+            base: "EUR",
+            quotes: "USD,GBP,CHF"
+        }).toString();
+
+        const response = await fetch(url);
+
+        if (!response.ok) {
+            throw new Error("Грешка при зареждане на курсовете.");
+        }
+
+        const rows = await response.json();
+
+        if (!Array.isArray(rows) || rows.length === 0) {
+            throw new Error("Няма налични валутни курсове.");
+        }
+
+        const rates = {
+            EUR: 1,
+            BGN: 1.95583
+        };
+
+        rows.forEach(item => {
+
+            rates[item.quote] = Number(item.rate);
+
+        });
+
+        if (
+            !rates.USD ||
+            !rates.GBP ||
+            !rates.CHF
+        ) {
+            throw new Error("Липсват валутни данни.");
+        }
+
+        const currencyData = {
+            rates: rates,
+            date: rows[0].date,
+            updatedAt: Date.now()
+        };
+
+        localStorage.setItem(
+            CURRENCY_CACHE_KEY,
+            JSON.stringify(currencyData)
+        );
+
+        if (info) {
+            info.textContent =
+                "Курсове от ЕЦБ. Дата: " +
+                currencyData.date;
+        }
+
+        return currencyData;
+
+    } catch (error) {
+
+        console.error("Валутни курсове:", error);
+
+        const savedData = localStorage.getItem(
+            CURRENCY_CACHE_KEY
+        );
+
+        if (savedData) {
+
+            try {
+
+                const cached = JSON.parse(savedData);
+
+                if (cached.rates) {
+
+                    if (info) {
+                        info.textContent =
+                            "Офлайн режим. Използват се запазени курсове от: " +
+                            cached.date;
+                    }
+
+                    return {
+                        ...cached,
+                        offline: true
+                    };
+
+                }
+
+            } catch (cacheError) {
+
+                console.error(
+                    "Грешка при прочитане на запазените курсове:",
+                    cacheError
+                );
+
+            }
+
+        }
+
+        if (info) {
+            info.textContent =
+                "Неуспешно зареждане. Провери интернет връзката.";
+        }
+
+        throw error;
+
+    }
+
+}
+
+
+/* =====================================================
+   ПРЕОБРАЗУВАНЕ НА ВАЛУТИ
+===================================================== */
+
+function calculateCurrencyConversion(
+    amount,
+    from,
+    to,
+    rates
+) {
+
+    if (
+        !rates[from] ||
+        !rates[to]
+    ) {
+        throw new Error("Невалидна валута.");
+    }
+
+    const converted =
+        amount * (rates[to] / rates[from]);
+
+    return {
+        result: converted,
+        rate: rates[to] / rates[from]
+    };
+
+}
+
+
+
+
+/* =====================================================
+   3. ИНИЦИАЛИЗИРАНЕ НА ИНСТРУМЕНТИТЕ
+===================================================== */
+
+function initializeUtilityTools() {
+
+    const toolButtons =
+        document.querySelectorAll(".tool-nav-button");
+
+    const toolPanels =
+        document.querySelectorAll(".tool-panel");
+
+
+    /* ПРЕВКЛЮЧВАНЕ МЕЖДУ КАЛКУЛАТОРИТЕ */
+
+    toolButtons.forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const targetId = button.dataset.tool;
+
+            toolButtons.forEach(item => {
+                item.classList.toggle("active", item === button);
+            });
+
+            toolPanels.forEach(panel => {
+
+                const active = panel.id === targetId;
+
+                panel.hidden = !active;
+                panel.classList.toggle("active", active);
+
+            });
+
+        });
+
+    });
+
+
+    /* ОСНОВЕН КАЛКУЛАТОР */
+
+    const display =
+        document.getElementById("basicCalcDisplay");
+
+    document.querySelectorAll("[data-calc]").forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const value = button.dataset.calc;
+
+            if (display.value === "Грешка") {
+                display.value = "0";
+            }
+
+            if (/^[0-9.]$/.test(value)) {
+
+                if (
+                    value === "." &&
+                    display.value.split(/[+\-*/]/).pop().includes(".")
+                ) {
+                    return;
+                }
+
+                display.value =
+                    display.value === "0" && value !== "."
+                        ? value
+                        : display.value + value;
+
+            } else {
+
+                if (display.value === "0") {
+                    return;
+                }
+
+                display.value += value;
+
+            }
+
+        });
+
+    });
+
+
+    document.getElementById("calcClear")
+        .addEventListener("click", () => {
+
+            display.value = "0";
+
+        });
+
+
+    document.getElementById("calcEquals")
+        .addEventListener("click", () => {
+
+            try {
+
+                const result =
+                    evaluateCalculatorExpression(display.value);
+
+                display.value =
+                    String(Number(result.toFixed(10)));
+
+            } catch (error) {
+
+                display.value = "Грешка";
+
+            }
+
+        });
+
+
+   
+/* =====================================================
+   ВАЛУТЕН КОНВЕРТОР
+===================================================== */
+
+let currentCurrencyData = null;
+
+
+/* Зареждане при избор на валутния калкулатор */
+
+async function refreshCurrencyRates() {
+
+    try {
+
+        currentCurrencyData = await loadCurrencyRates();
+
+    } catch (error) {
+
+        currentCurrencyData = null;
+
+    }
+
+}
+
+
+/* Бутон за ръчно обновяване */
+
+document.getElementById("refreshCurrencyRatesButton")
+    .addEventListener("click", async () => {
+
+        await refreshCurrencyRates();
+
+    });
+
+
+/* Автоматично зареждане при отваряне на калкулатора */
+
+const currencyNavigationButton =
+    document.querySelector(
+        '.tool-nav-button[data-tool="currencyCalculator"]'
+    );
+
+if (currencyNavigationButton) {
+
+    currencyNavigationButton.addEventListener(
+        "click",
+        refreshCurrencyRates
+    );
+
+}
+
+
+/* Преобразуване */
+
+document.getElementById("convertCurrencyButton")
+    .addEventListener("click", async () => {
+
+        const amountInput =
+            document.getElementById("currencyAmount");
+
+        const amount = Number(amountInput.value);
+
+        const from =
+            document.getElementById("currencyFrom").value;
+
+        const to =
+            document.getElementById("currencyTo").value;
+
+        const output =
+            document.getElementById("currencyResult");
+
+        if (
+            amountInput.value === "" ||
+            !Number.isFinite(amount) ||
+            amount < 0
+        ) {
+
+            output.textContent =
+                "Въведи валидна сума.";
+
+            return;
+
+        }
+
+        try {
+
+            if (!currentCurrencyData) {
+                await refreshCurrencyRates();
+            }
+
+            if (!currentCurrencyData) {
+                throw new Error("Няма налични курсове.");
+            }
+
+            const conversion =
+                calculateCurrencyConversion(
+                    amount,
+                    from,
+                    to,
+                    currentCurrencyData.rates
+                );
+
+            const formattedResult =
+                conversion.result.toLocaleString(
+                    "bg-BG",
+                    {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 4
+                    }
+                );
+
+            const formattedRate =
+                conversion.rate.toLocaleString(
+                    "bg-BG",
+                    {
+                        minimumFractionDigits: 4,
+                        maximumFractionDigits: 6
+                    }
+                );
+
+            output.innerHTML = `
+                <strong>
+                    ${amount.toLocaleString("bg-BG")} ${from}
+                    =
+                    ${formattedResult} ${to}
+                </strong>
+
+                <br>
+
+                <small>
+                    1 ${from} = ${formattedRate} ${to}
+                </small>
+            `;
+
+        } catch (error) {
+
+            output.textContent =
+                "Неуспешно преобразуване. " + error.message;
+
+        }
+
+    });
+
+    /* КАЛКУЛАТОР ЗА ПРОЦЕНТИ */
+
+    document.getElementById("calculatePercentButton")
+        .addEventListener("click", () => {
+
+            const baseInput =
+                document.getElementById("percentBase").value;
+
+            const percentInput =
+                document.getElementById("percentValue").value;
+
+            const base = Number(baseInput);
+            const percent = Number(percentInput);
+
+            const output =
+                document.getElementById("percentResult");
+
+            if (
+                baseInput === "" ||
+                percentInput === "" ||
+                !Number.isFinite(base) ||
+                !Number.isFinite(percent)
+            ) {
+
+                output.textContent =
+                    "Попълни валидна сума и процент.";
+
+                return;
+
+            }
+
+            const result = base * percent / 100;
+
+            output.textContent =
+                `${percent}% от ${base} = ` +
+                result.toLocaleString("bg-BG", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                });
+
+        });
+
+
+    document.getElementById("calculateShareButton")
+        .addEventListener("click", () => {
+
+            const baseInput =
+                document.getElementById("percentBase").value;
+
+            const partInput =
+                document.getElementById("percentPart").value;
+
+            const base = Number(baseInput);
+            const part = Number(partInput);
+
+            const output =
+                document.getElementById("shareResult");
+
+            if (
+                baseInput === "" ||
+                partInput === "" ||
+                !Number.isFinite(base) ||
+                !Number.isFinite(part) ||
+                base === 0
+            ) {
+
+                output.textContent =
+                    "Въведи част и ненулева основна сума.";
+
+                return;
+
+            }
+
+            const result = part / base * 100;
+
+            output.textContent =
+                `${part} представлява ` +
+                `${result.toLocaleString("bg-BG", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })}% от ${base}.`;
+
+        });
+
+
+    /* КАЛКУЛАТОР ЗА СПЕСТЯВАНИЯ */
+
+    document.getElementById("calculateSavingsButton")
+        .addEventListener("click", () => {
+
+            const start =
+                Number(document.getElementById("savingStart").value);
+
+            const monthly =
+                Number(document.getElementById("savingMonthly").value);
+
+            const months =
+                Number(document.getElementById("savingMonths").value);
+
+            const output =
+                document.getElementById("savingsResult");
+
+            if (
+                [start, monthly, months].some(
+                    value => !Number.isFinite(value) || value < 0
+                ) ||
+                !Number.isInteger(months)
+            ) {
+
+                output.textContent =
+                    "Въведи валидни неотрицателни стойности.";
+
+                return;
+
+            }
+
+            const total = start + monthly * months;
+
+            output.textContent =
+                `Очаквана сума: ${total.toLocaleString("bg-BG", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })} €`;
+
+        });
+
+
+    /* БЮДЖЕТЕН КАЛКУЛАТОР */
+
+    document.getElementById("calculateBudgetButton")
+        .addEventListener("click", () => {
+
+            const incomeInput =
+                document.getElementById("budgetIncome").value;
+
+            const fixedInput =
+                document.getElementById("budgetFixed").value;
+
+            const otherInput =
+                document.getElementById("budgetOther").value;
+
+            const income = Number(incomeInput);
+            const fixed = Number(fixedInput);
+            const other = Number(otherInput);
+
+            const output =
+                document.getElementById("budgetResult");
+
+            if (
+                [incomeInput, fixedInput, otherInput].some(value => value === "") ||
+                [income, fixed, other].some(
+                    value => !Number.isFinite(value) || value < 0
+                )
+            ) {
+
+                output.textContent =
+                    "Попълни всички полета с валидни стойности.";
+
+                return;
+
+            }
+
+            const remaining = income - fixed - other;
+
+            output.textContent =
+                `Оставащи средства: ${remaining.toLocaleString("bg-BG", {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                })} €`;
+
+        });
+
+}
+
+
+/* =====================================================
+   4. СЪДЪРЖАНИЕ НА НАРЪЧНИКА
+===================================================== */
+
+function initializeManual() {
+
+    const article =
+        document.getElementById("manualArticle");
+
+    if (!article) return;
+
+
+    const topics = {
+
+        intro: {
+            title: "За приложението",
+            image: "images/manual/intro.png",
+            caption: "Финансов организатор",
+            content: `
+                <p class="manual-lead">
+                    „Финансов организатор“ е локално уеб приложение
+                    за управление на лични финанси.
+                </p>
+
+                <p>
+                    Приложението предоставя възможност за организиране
+                    на финансови операции, сметки, фондове и периоди.
+                </p>
+
+                <h3>Основни функции</h3>
+
+                <ul>
+                    <li>Управление на финансови операции.</li>
+                    <li>Организиране на години и месеци.</li>
+                    <li>Управление на сметки.</li>
+                    <li>Управление на фондове.</li>
+                    <li>Преглед на финансово обобщение.</li>
+                    <li>Архивиране и резервни копия.</li>
+                </ul>
+            `
+        },
+
+        interface: {
+            title: "Начална страница",
+            image: "images/manual/interface.png",
+            caption: "Основният интерфейс на приложението",
+            content: `
+                <p class="manual-lead">
+                    Началната страница е разделена на няколко основни области.
+                </p>
+
+                <h3>Горен хедър</h3>
+                <p>
+                    Съдържа бутоните за сметки, фондове, обобщение,
+                    архив, резервно копие, инструменти, наръчник и изход.
+                </p>
+
+                <h3>Лява странична лента</h3>
+                <p>
+                    Използва се за избор на финансова година и месец.
+                </p>
+
+                <h3>Централна работна област</h3>
+                <p>
+                    Показва финансовото обобщение, лентата с операции
+                    и таблицата със записите за избрания период.
+                </p>
+            `
+        },
+
+        profiles: {
+            title: "Потребителски профили",
+            image: "images/manual/profiles.png",
+            caption: "Потребителски профили",
+            content: `
+                <p class="manual-lead">
+                    Всеки профил има отделни финансови данни.
+                </p>
+
+                <p>
+                    От страницата за вход можеш да създаваш,
+                    преименуваш и изтриваш профили.
+                </p>
+
+                <h3>Важно</h3>
+
+                <div class="manual-warning">
+                    При изтриване на профил се премахват и данните,
+                    свързани с него. Увери се, че имаш резервно копие,
+                    ако искаш да запазиш информацията.
+                </div>
+            `
+        },
+
+        periods: {
+            title: "Години и месеци",
+            image: "images/manual/periods.png",
+            caption: "Избор на финансов период",
+            content: `
+                <p class="manual-lead">
+                    Финансовите записи се организират по години и месеци.
+                </p>
+
+                <ol>
+                    <li>Намери желаната година в лявата лента.</li>
+                    <li>Разгъни годината.</li>
+                    <li>Избери желания месец.</li>
+                </ol>
+
+                <p>
+                    След избора таблицата показва записите за този период.
+                </p>
+            `
+        },
+
+        records: {
+            title: "Финансови операции",
+            image: "images/manual/records.png",
+            caption: "Таблица с финансови операции",
+            content: `
+                <p class="manual-lead">
+                    Таблицата съдържа финансовите записи за избрания период.
+                </p>
+
+                <h3>Работа със записите</h3>
+
+                <ul>
+                    <li>Добавяне на нов запис.</li>
+                    <li>Редактиране на избран запис.</li>
+                    <li>Изтриване на избран запис.</li>
+                    <li>Активиране и деактивиране.</li>
+                    <li>Филтриране и обновяване.</li>
+                    <li>Експортиране и принтиране.</li>
+                </ul>
+
+                <h3>Видове операции</h3>
+
+                <p>
+                    Приложението поддържа приходи, разходи,
+                    прехвърляния, вноски във фонд и възстановени суми.
+                </p>
+            `
+        },
+
+        accounts: {
+            title: "Сметки",
+            image: "images/manual/accounts.png",
+            caption: "Управление на сметки",
+            content: `
+                <p class="manual-lead">
+                    Прозорецът „Сметки“ позволява управление на наличните сметки.
+                </p>
+
+                <ul>
+                    <li>Добавяне на сметка.</li>
+                    <li>Редактиране на сметка.</li>
+                    <li>Изтриване на сметка.</li>
+                    <li>Преглед на подробна информация.</li>
+                </ul>
+            `
+        },
+
+        funds: {
+            title: "Фондове",
+            image: "images/manual/funds.png",
+            caption: "Управление на фондове",
+            content: `
+                <p class="manual-lead">
+                    Фондовете позволяват да отделяш средства за различни цели.
+                </p>
+
+                <ul>
+                    <li>Създаване на фонд.</li>
+                    <li>Редактиране и изтриване.</li>
+                    <li>Преглед на информация за фонда.</li>
+                    <li>Добавяне на вноска.</li>
+                </ul>
+            `
+        },
+
+        overview: {
+            title: "Финансово обобщение",
+            image: "images/manual/overview.png",
+            caption: "Финансово обобщение",
+            content: `
+                <p class="manual-lead">
+                    Обобщението показва основните финансови показатели
+                    за избрания период.
+                </p>
+
+                <p>
+                    В основния панел се виждат общите приходи,
+                    общите разходи, балансът и броят активни записи.
+                </p>
+
+                <p>
+                    Чрез бутона „Обобщение“ се отваря отделен прозорец
+                    с допълнителна информация.
+                </p>
+            `
+        },
+
+        archives: {
+            title: "Архивиране и отчети",
+            image: "images/manual/archives.png",
+            caption: "Архивиране на периоди",
+            content: `
+                <p class="manual-lead">
+                    Архивът позволява да преглеждаш приключили финансови периоди.
+                </p>
+
+                <p>
+                    Архивирането има отделен прозорец и потвърждение.
+                    Архивираните периоди имат ограничения за редакция.
+                </p>
+
+                <p>
+                    В архивните отчети се показват обобщени показатели,
+                    таблици и сравнения.
+                </p>
+            `
+        },
+
+        backup: {
+            title: "Резервни копия",
+            image: "images/manual/backup.png",
+            caption: "Резервно копие",
+            content: `
+                <p class="manual-lead">
+                    Резервните копия позволяват да запазиш финансовата информация
+                    във файл и да я възстановиш при необходимост.
+                </p>
+
+                <div class="manual-warning">
+                    Преди възстановяване на копие е разумно да запазиш
+                    и текущите данни, защото възстановяването може да ги замени.
+                </div>
+            `
+        },
+
+        storage: {
+            title: "Съхранение на данните",
+            image: "images/manual/storage.png",
+            caption: "Локално съхранение",
+            content: `
+                <p class="manual-lead">
+                    Приложението използва LocalStorage за финансовите данни
+                    и SessionStorage за текущата потребителска сесия.
+                </p>
+
+                <p>
+                    Данните се съхраняват в браузъра на текущото устройство.
+                </p>
+
+                <div class="manual-warning">
+                    Изчистването на данните на сайта или загубата на браузърния
+                    профил може да доведе до загуба на информация.
+                    Създавай резервни копия редовно.
+                </div>
+            `
+        },
+
+        tools: {
+            title: "Инструменти",
+            image: "images/manual/tools.png",
+            caption: "Допълнителни калкулатори",
+            content: `
+                <p class="manual-lead">
+                    Инструментите предоставят помощни калкулатори,
+                    които не променят финансовите записи.
+                </p>
+
+                <ul>
+                    <li>Основен математически калкулатор.</li>
+                    <li>Валутен конвертор с ръчно въведен курс.</li>
+                    <li>Калкулатор за проценти.</li>
+                    <li>Калкулатор за спестявания.</li>
+                    <li>Бюджетен калкулатор.</li>
+                </ul>
+            `
+        },
+
+        status: {
+            title: "Статус лента",
+            image: "images/manual/status.png",
+            caption: "Информационна лента",
+            content: `
+                <p class="manual-lead">
+                    Долните статусни ленти показват информация за текущата работа.
+                </p>
+
+                <ul>
+                    <li>Системни съобщения.</li>
+                    <li>Използвана валута.</li>
+                    <li>Версия на приложението.</li>
+                    <li>Текущ потребител.</li>
+                    <li>Текуща дата.</li>
+                    <li>Информация за локалното съхранение.</li>
+                </ul>
+            `
+        }
+
+    };
+
+
+    /* ПОКАЗВАНЕ НА ТЕМА */
+
+    function showManualTopic(topicId) {
+
+        const topic = topics[topicId];
+
+        if (!topic) return;
+
+        document.querySelectorAll(".manual-topic").forEach(button => {
+
+            button.classList.toggle(
+                "active",
+                button.dataset.topic === topicId
+            );
+
+        });
+
+        article.innerHTML = `
+
+            <h2>${topic.title}</h2>
+
+            <figure>
+
+                <img
+                    src="${topic.image}"
+                    alt="${topic.caption}"
+                    onerror="this.style.display='none'">
+
+                <figcaption>${topic.caption}</figcaption>
+
+            </figure>
+
+            ${topic.content}
+
+        `;
+
+        article.scrollTop = 0;
+
+    }
+
+
+    /* ИЗБОР НА ТЕМА */
+
+    document.querySelectorAll(".manual-topic").forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            showManualTopic(button.dataset.topic);
+
+        });
+
+    });
+
+
+    /* РАЗГЪВАНЕ И СВИВАНЕ */
+
+    document.querySelectorAll(".manual-group-toggle").forEach(button => {
+
+        button.addEventListener("click", () => {
+
+            const group =
+                button.closest(".manual-tree-group");
+
+            const subtopics =
+                group.querySelector(".manual-subtopics");
+
+            const expanded =
+                button.getAttribute("aria-expanded") === "true";
+
+            button.setAttribute(
+                "aria-expanded",
+                String(!expanded)
+            );
+
+            subtopics.classList.toggle("collapsed", expanded);
+
+        });
+
+    });
+
+
+    showManualTopic("intro");
+
+}
+
+
+/* =====================================================
+   5. СВЪРЗВАНЕ НА НОВИТЕ БУТОНИ
+===================================================== */
+
+function initializeExtraFeatures() {
+
+    initializeUtilityTools();
+
+    initializeManual();
+
+
+    document.getElementById("toolsButton")
+        .addEventListener("click", () => {
+
+            openDialog("toolsDialog");
+
+        });
+
+
+    document.getElementById("manualButton")
+        .addEventListener("click", () => {
+
+            openDialog("manualDialog");
+
+        });
+
+}
+
+
+
+
 function initializeApplication() {
 
     createRemoveMonthButton();
 
     initializeEvents();
 
+    initializeExtraFeatures();
+
     renderAll();
 
     saveData();
 
+    updateUserStatusBar();
+
     setStatus("Финансов организатор е готов за работа.");
 }
+
 
 
 /* ==========================================
