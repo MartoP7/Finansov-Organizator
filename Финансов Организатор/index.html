@@ -122,12 +122,45 @@
         
 
         <button type="button" id="backupButton" class="header-button">
-            <span>🖬</span> Резервно копие
+            <svg xmlns="http://w3.org" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+  <polyline points="17 21 17 13 7 13 7 21"></polyline>
+  <polyline points="7 3 7 8 15 8"></polyline>
+</svg>
+        Резервно копие
         </button>
+
+
+
+        <button type="button" id="catalogManagerButton" class="header-button">
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <ellipse cx="12" cy="5" rx="9" ry="3"></ellipse>
+  <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path>
+  <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path>
+</svg>
+
+    Данни
+</button>
+
+
+
+
 
         <button type="button" id="toolsButton" class="header-button">
     <!-- <img src="images/icons/tools.png" alt="" class="header-feature-icon"> -->
-    🛠 Инструменти
+     
+<svg xmlns="http://w3.org" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+  <!-- Гаечен ключ -->
+  <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+  <!-- Чук -->
+  <path d="M15 15l6 6"></path>
+  <path d="M9.5 9.5L4 4"></path>
+  <path d="M7 2L2 7l2.5 2.5 5-5L7 2z"></path>
+</svg>
+
+
+
+    Инструменти
 </button>
 
 <button type="button" id="manualButton" class="header-button">
@@ -338,6 +371,12 @@
                 <div class="toolbar-group">
 
                     <button type="button"
+                            id="refreshButton"
+                            title="Обнови таблицата">
+                        <img src="images/icons/refresh.png" class="button-icon" alt="refresh">
+                    </button>
+
+                    <button type="button"
                             id="filterButton"
                             title="Филтрирай записите">
                         <!-- <span class="button-icon">⚑</span> -->
@@ -345,10 +384,17 @@
                     </button>
 
                     <button type="button"
-                            id="refreshButton"
-                            title="Обнови таблицата">
-                        <img src="images/icons/refresh.png" class="button-icon" alt="refresh">
+                            id="searchButton"
+                            title="Търси запис">
+                        <!-- <span class="button-icon">⚑</span> -->
+                         <img src="images/icons/search.PNG" class="button-icon" alt="search">
                     </button>
+
+                </div>
+
+                <div class="toolbar-separator"></div>
+
+                <div class="toolbar-group">
 
                     <button type="button"
                             id="printButton"
@@ -359,7 +405,7 @@
                     <button type="button"
                             id="exportButton"
                             title="Експортирай записите">
-                        <img src="images/icons/export.png" class="button-icon" alt="export">
+                        <img src="images/icons/csv.png" class="button-icon" alt="export">
                     </button>
 
                 </div>
@@ -429,7 +475,7 @@
                     Валута: EUR (€)
                 </span>
                 <span class="status-right">
-                    Версия: 1.3
+                    Версия: 1.4
                 </span>
                 </div>
 
@@ -564,33 +610,54 @@
 
             <div class="form-row">
 
-                <label for="recordCategory">Категория:</label>
+    <label for="recordCategory">Категория:</label>
 
-                <select id="recordCategory">
-                    <option value="">Без категория</option>
-                    <option value="salary">Заплата</option>
-                    <option value="food">Храна</option>
-                    <option value="fuel">Гориво</option>
-                    <option value="bills">Сметки</option>
-                    <option value="shopping">Покупки</option>
-                    <option value="entertainment">Забавление</option>
-                    <option value="health">Здраве</option>
-                    <option value="education">Образование</option>
-                    <option value="other">Други</option>
-                </select>
+    <div class="catalog-field-control">
 
-            </div>
+        <select id="recordCategory">
+            <option value="">Без категория</option>
+        </select>
+
+        <button type="button"
+                id="openCategoryPickerButton"
+                class="catalog-field-button"
+                title="Избери категория">
+
+            <img src="images/icons/picker.PNG" alt="">
+
+        </button>
+
+    </div>
+
+</div>
 
 
             <div class="form-row">
 
-                <label for="recordSource">Получател / Източник:</label>
+    <label for="recordSource">Получател / Източник:</label>
 
-                <input type="text"
-                       id="recordSource"
-                       placeholder="Например: Работодател, магазин...">
+    <div class="catalog-field-control">
 
-            </div>
+        <input type="text"
+               id="recordSource"
+               placeholder="Например: Работодател, магазин...">
+
+        <input type="hidden" id="recordSourceType" value="sources">
+
+        <input type="hidden" id="recordSourceCatalogId" value="">
+
+        <button type="button"
+                id="openSourcePickerButton"
+                class="catalog-field-button"
+                title="Избери източник или доставчик">
+
+            <img src="images/icons/picker.png" alt="">
+
+        </button>
+
+    </div>
+
+</div>
 
 
             <div class="form-row">
@@ -604,13 +671,34 @@
             </div>
 
 
-            <div class="form-row checkbox-row">
+            <div class="form-row record-status-row">
 
-                <label for="recordActive">Активен запис:</label>
+    <label>Статус на записа:</label>
 
-                <input type="checkbox" id="recordActive">
+    <div class="record-status-control">
 
-            </div>
+        <button type="button"
+                id="recordActiveButton"
+                class="record-status-button"
+                aria-label="Неактивен запис"
+                aria-pressed="false"
+                title="Промени статуса">
+
+            <img src="images/icons/cross.PNG"
+                 id="recordActiveIcon"
+                 alt="Неактивен">
+
+        </button>
+
+        <span id="recordActiveText">Неактивен</span>
+
+        <input type="checkbox"
+               id="recordActive"
+               hidden>
+
+    </div>
+
+</div>
 
         </div>
 
@@ -629,6 +717,511 @@
         </div>
 
     </form>
+
+</dialog>
+
+
+
+<!-- ========================================= -->
+<!-- УПРАВЛЕНИЕ НА КАТЕГОРИИ И ИЗТОЧНИЦИ -->
+<!-- ========================================= -->
+
+<dialog id="catalogManagerDialog"
+        class="app-dialog catalog-manager-dialog">
+
+    <div class="dialog-header">
+
+        <span>Управление на данни</span>
+
+        <button type="button"
+                class="dialog-close"
+                data-close="catalogManagerDialog">✕</button>
+
+    </div>
+
+    <div class="dialog-content">
+
+        <!-- ЛЕНТА С ДЕЙСТВИЯ -->
+
+        <div class="toolbar catalog-manager-toolbar">
+
+    <div class="toolbar-group">
+
+        <button type="button" id="activateCatalogButton"
+                title="Активирай избрания запис">
+            <img src="images/icons/check.png" class="toolbar-button" alt="Активирай">
+        </button>
+
+        <button type="button" id="deactivateCatalogButton"
+                title="Деактивирай избрания запис">
+            <img src="images/icons/cross.png" class="toolbar-button" alt="Деактивирай">
+        </button>
+
+    </div>
+
+    <div class="toolbar-separator"></div>
+
+    <div class="toolbar-group">
+
+        <button type="button" id="addCatalogItemButton"
+                title="Добави запис">
+            <img src="images/icons/addRecord.png" class="button-icon" alt="Добави">
+        </button>
+
+        <button type="button" id="editCatalogItemButton"
+                title="Редактирай запис">
+            <img src="images/icons/editRecord.png" class="button-icon" alt="Редактирай">
+        </button>
+
+        <button type="button" id="deleteCatalogItemButton"
+                title="Изтрий запис">
+            <img src="images/icons/deleteRecord.png" class="button-icon" alt="Изтрий">
+        </button>
+
+    </div>
+
+    <div class="toolbar-separator"></div>
+
+    <div class="toolbar-group">
+
+        <button type="button" id="refreshCatalogButton"
+                title="Обнови данните">
+            <img src="images/icons/refresh.PNG" class="button-icon" alt="Обнови">
+        </button>
+
+        <button type="button" id="searchCatalogButton"
+                title="Фокус върху търсенето">
+            <img src="images/icons/find.png" class="button-icon" alt="Търси">
+        </button>
+
+    </div>
+
+</div>
+
+
+        <!-- ТЪРСЕНЕ -->
+
+        <div class="catalog-search-row">
+
+            <img src="images/icons/search.PNG" alt="">
+
+            <input type="search"
+                   id="catalogManagerSearch"
+                   placeholder="Търси категория, източник или доставчик...">
+
+        </div>
+
+
+        <!-- ДЪРВО И ПАНЕЛ ЗА РЕДАКЦИЯ -->
+
+        <div class="catalog-manager-layout">
+
+            <aside class="catalog-tree-panel">
+
+                <div class="catalog-panel-heading">
+                    Структура на данните
+                </div>
+
+                <ul id="catalogTree" class="catalog-tree">
+                    <!-- Генерира се от JavaScript -->
+                </ul>
+
+            </aside>
+
+
+            <section class="catalog-editor-panel">
+
+                <div class="catalog-panel-heading">
+                    Информация за избрания запис
+                </div>
+
+                <div id="catalogSelectionInfo" class="catalog-selection-info">
+
+    <div class="catalog-info-empty">
+        <img src="images/icons/folder.PNG" alt="">
+        <span>Избери запис от дървовидната структура.</span>
+    </div>
+
+</div>
+
+
+                <div class="catalog-editor-form">
+
+                    <h3 id="catalogEditorTitle">
+                        Нов запис
+                    </h3>
+
+                    <div class="form-row">
+
+                        <label for="catalogEditorType">
+                            Вид:
+                        </label>
+
+                        <select id="catalogEditorType">
+                            <option value="categories">Категория</option>
+                            <option value="sources">Източник</option>
+                            <option value="suppliers">Доставчик</option>
+                        </select>
+
+                    </div>
+
+
+                    <div class="form-row">
+
+                        <label for="catalogEditorName">
+                            Наименование:
+                        </label>
+
+                        <input type="text"
+                               id="catalogEditorName"
+                               maxlength="60"
+                               placeholder="Въведи име...">
+
+                    </div>
+
+
+                    <div class="catalog-editor-actions">
+
+                        <button type="button"
+                                id="catalogSaveItemButton">
+
+                            <img src="images/icons/check.PNG" alt="">
+                            Запази
+
+                        </button>
+
+                        <button type="button"
+                                id="catalogCancelEditButton">
+
+                            Отказ
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <div class="catalog-help-text" id="catalogHelpText">
+
+                    Фабричните категории могат да се активират и
+                    деактивират, но не могат да се преименуват или
+                    изтриват.
+
+                </div>
+
+            </section>
+
+        </div>
+
+    </div>
+
+
+    <div class="dialog-footer">
+
+        <button type="button"
+                data-close="catalogManagerDialog">
+            Затвори
+        </button>
+
+    </div>
+
+</dialog>
+
+
+
+
+
+<!-- ========================================= -->
+<!-- ИЗБОР НА КАТЕГОРИЯ / ИЗТОЧНИК / ДОСТАВЧИК -->
+<!-- ========================================= -->
+
+<dialog id="catalogPickerDialog"
+        class="app-dialog catalog-picker-dialog">
+
+    <div class="dialog-header">
+
+        <span id="catalogPickerTitle">
+            Избор на данни
+        </span>
+
+        <button type="button"
+                class="dialog-close"
+                data-close="catalogPickerDialog">✕</button>
+
+    </div>
+
+
+    <div class="dialog-content">
+
+        <div class="catalog-picker-toolbar">
+
+    <div class="catalog-picker-search">
+
+        <img src="images/icons/find.png" alt="">
+
+        <input type="search"
+               id="catalogPickerSearch"
+               placeholder="Търси запис...">
+
+    </div>
+
+    <div class="toolbar-group">
+
+        <button type="button"
+                id="catalogPickerChooseButton"
+                title="Избери запис">
+
+            <img src="images/icons/check.png"
+                 class="toolbar-button"
+                 alt="Избери">
+
+        </button>
+
+        <button type="button"
+                id="catalogPickerRefreshButton"
+                title="Обнови списъка">
+
+            <img src="images/icons/refresh.PNG"
+                 class="toolbar-button"
+                 alt="Обнови">
+
+        </button>
+
+        <button type="button"
+                id="catalogPickerManageButton"
+                title="Управление на данните">
+
+            <img src="images/icons/tools.png"
+                 class="toolbar-button"
+                 alt="Управление">
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<div class="catalog-picker-type-row">
+
+    <label for="catalogPickerType">Показване:</label>
+
+    <select id="catalogPickerType">
+
+        <option value="categories">Категории</option>
+        <option value="sources">Източници</option>
+        <option value="suppliers">Доставчици</option>
+
+    </select>
+
+</div>
+
+
+        <div class="catalog-picker-list"
+             id="catalogPickerList">
+
+            <!-- Записите се зареждат от JavaScript -->
+
+        </div>
+
+    </div>
+
+
+    <div class="dialog-footer">
+
+    <button type="button"
+            data-close="catalogPickerDialog">
+        Отказ
+    </button>
+
+</div>
+
+</dialog>
+
+
+
+<!-- ========================================= -->
+<!-- ПРОЗОРЕЦ ЗА ТЪРСЕНЕ НА ЗАПИСИ -->
+<!-- ========================================= -->
+
+<dialog id="searchDialog" class="app-dialog large-dialog">
+
+    <div class="dialog-header">
+
+        <span>Търсене на финансови записи</span>
+
+        <button type="button"
+                class="dialog-close"
+                data-close="searchDialog">✕</button>
+
+    </div>
+
+    <div class="dialog-content">
+
+        <div class="form-row">
+
+            <label for="recordSearchText">Търси дума:</label>
+
+            <input type="text"
+                   id="recordSearchText"
+                   placeholder="Описание, получател, източник...">
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="recordSearchType">Вид операция:</label>
+
+            <select id="recordSearchType">
+
+                <option value="">Всички видове</option>
+
+                <option value="income">Приход</option>
+
+                <option value="expense">Разход</option>
+
+                <option value="transfer">Прехвърляне</option>
+
+                <option value="fund">Вноска във фонд</option>
+
+                <option value="refund">Възстановена сума</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="recordSearchCategory">Категория:</label>
+
+            <select id="recordSearchCategory">
+
+                <option value="">Всички категории</option>
+
+                <option value="salary">Заплата</option>
+
+                <option value="food">Храна</option>
+
+                <option value="fuel">Гориво</option>
+
+                <option value="bills">Сметки</option>
+
+                <option value="shopping">Покупки</option>
+
+                <option value="entertainment">Забавление</option>
+
+                <option value="health">Здраве</option>
+
+                <option value="education">Образование</option>
+
+                <option value="other">Други</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="recordSearchStatus">Статус:</label>
+
+            <select id="recordSearchStatus">
+
+                <option value="">Всички</option>
+
+                <option value="active">Активни</option>
+
+                <option value="inactive">Неактивни</option>
+
+            </select>
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="recordSearchFrom">От дата:</label>
+
+            <input type="date" id="recordSearchFrom">
+
+        </div>
+
+
+        <div class="form-row">
+
+            <label for="recordSearchTo">До дата:</label>
+
+            <input type="date" id="recordSearchTo">
+
+        </div>
+
+
+        <div class="search-results-heading">
+
+            <strong>Резултати от търсенето</strong>
+
+            <span id="recordSearchCount">0 записа</span>
+
+        </div>
+
+
+        <div class="search-results-container">
+
+            <table class="records-table search-results-table">
+
+                <thead>
+
+                    <tr>
+                        <th>Статус</th>
+                        <th>Вид</th>
+                        <th>Дата</th>
+                        <th>Стойност</th>
+                        <th>Категория</th>
+                        <th>Получател / Източник</th>
+                        <th>Описание</th>
+                    </tr>
+
+                </thead>
+
+                <tbody id="recordSearchResults">
+
+                    <tr class="empty-table-row">
+
+                        <td colspan="7">
+                            Въведи критерии за търсене.
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="dialog-footer">
+
+    <button type="button" id="openSearchResultButton" class="search-action-button">
+        <img src="images/icons/find.png" alt="" class="search-action-icon">
+        <span>Отвори запис</span>
+    </button>
+
+    <button type="button" id="clearRecordSearchButton" class="search-action-button">
+        <img src="images/icons/cross.png" alt="" class="search-action-icon">
+        <span>Изчисти</span>
+    </button>
+
+    <button type="button" data-close="searchDialog">
+        Затвори
+    </button>
+
+</div>
 
 </dialog>
 
@@ -1890,7 +2483,7 @@
             <div class="manual-tree-group">
 
                 <button type="button" class="manual-group-toggle" aria-expanded="true">
-                    <span class="manual-tree-arrow">▼</span>
+                    <span class="manual-tree-toggle-box">−</span>
                     Основи на приложението
                 </button>
 
@@ -1919,7 +2512,7 @@
             <div class="manual-tree-group">
 
                 <button type="button" class="manual-group-toggle" aria-expanded="true">
-                    <span class="manual-tree-arrow">▼</span>
+                    <span class="manual-tree-toggle-box">−</span>
                     Финансово управление
                 </button>
 
@@ -1958,7 +2551,7 @@
             <div class="manual-tree-group">
 
                 <button type="button" class="manual-group-toggle" aria-expanded="true">
-                    <span class="manual-tree-arrow">▼</span>
+                    <span class="manual-tree-toggle-box">−</span>
                     Архиви и данни
                 </button>
 
@@ -1987,7 +2580,7 @@
             <div class="manual-tree-group">
 
                 <button type="button" class="manual-group-toggle" aria-expanded="true">
-                    <span class="manual-tree-arrow">▼</span>
+                    <span class="manual-tree-toggle-box">−</span>
                     Допълнителни функции
                 </button>
 

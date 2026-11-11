@@ -76,6 +76,8 @@ const currentDate = new Date();
 
 let data = loadData();
 
+syncCategoryNames();
+
 let selectedYear = data.selectedYear;
 let selectedMonth = data.selectedMonth;
 
@@ -96,9 +98,1161 @@ let activeFilters = {
 let confirmCallback = null;
 
 
+let selectedCatalogItem = null;
+
+let catalogEditorMode = "add";
+
+let catalogPickerMode = "category";
+
+let selectedCatalogPickerId = null;
+
+
+
+
+function changeRecordStatus(active) {
+
+    if (!selectedRecordId) {
+
+        alert("Моля, избери запис.");
+        return;
+    }
+
+    const record = data.records.find(
+        item => item.id === selectedRecordId
+    );
+
+    if (!record) return;
+
+    if (record.active === active) {
+
+        alert(
+            active
+                ? "Записът вече е активен."
+                : "Записът вече е неактивен."
+        );
+
+        return;
+    }
+
+    record.active = active;
+
+    renderAll();
+    saveData();
+
+    setStatus(
+        active
+            ? "Записът е активиран."
+            : "Записът е деактивиран."
+    );
+}
+
+
+
+
+
 /* =====================================================
    2. НАЧАЛНИ ДАННИ
 ===================================================== */
+
+
+
+/* =====================================================
+   КАТАЛОЗИ: КАТЕГОРИИ, ИЗТОЧНИЦИ И ДОСТАВЧИЦИ
+===================================================== */
+
+function createDefaultCatalogs() {
+    return {
+        categories: Object.entries(CATEGORY_NAMES).map(([id, name]) => ({
+            id,
+            name,
+            active: true,
+            builtin: true,
+            createdAt: new Date().toISOString()
+        })),
+
+        sources: [],
+        suppliers: []
+    };
+}
+
+
+function normalizeCatalogs(savedCatalogs) {
+    const defaults = createDefaultCatalogs();
+
+    if (!savedCatalogs || typeof savedCatalogs !== "object") {
+        return defaults;
+    }
+
+    const categories = Array.isArray(savedCatalogs.categories)
+        ? [...savedCatalogs.categories]
+        : [];
+
+    // Добавяме липсващи фабрични категории.
+    defaults.categories.forEach(defaultCategory => {
+        if (!categories.some(item => item.id === defaultCategory.id)) {
+            categories.unshift(defaultCategory);
+        }
+    });
+
+    return {
+        categories,
+
+        sources: Array.isArray(savedCatalogs.sources)
+            ? savedCatalogs.sources
+            : [],
+
+        suppliers: Array.isArray(savedCatalogs.suppliers)
+            ? savedCatalogs.suppliers
+            : []
+    };
+}
+
+
+// Добавяме персонализираните категории към стария речник.
+// Така съществуващите справки и таблици ще продължат да работят.
+function syncCategoryNames() {
+    data.catalogs.categories.forEach(category => {
+        CATEGORY_NAMES[category.id] = category.name;
+    });
+}
+
+
+function getCatalogItems(type) {
+    return data.catalogs[type] || [];
+}
+
+
+function getCatalogItem(type, id) {
+    return getCatalogItems(type).find(item => item.id === id);
+}
+
+
+function getCatalogTypeName(type) {
+    const names = {
+        categories: "Категории",
+        sources: "Източници",
+        suppliers: "Доставчици"
+    };
+
+    return names[type] || "Данни";
+}
+
+function setRecordSourceLocked(locked) {
+
+    const input = document.getElementById("recordSource");
+
+    if (!input) return;
+
+    input.readOnly = locked;
+
+    input.classList.toggle("catalog-source-locked", locked);
+
+    input.title = locked
+        ? "Избрано е от запазените данни. Използвай бутона до полето, за да го смениш."
+        : "Въведи източник или доставчик.";
+}
+
+
+function getSuggestedSourceType(recordType) {
+    if (recordType === "expense") return "suppliers";
+
+    return "sources";
+}
+
+
+function populateRecordCategorySelect(selectedId = "") {
+    const select = document.getElementById("recordCategory");
+
+    if (!select) return;
+
+    select.innerHTML = '<option value="">Без категория</option>';
+
+    const categories = data.catalogs.categories
+        .filter(item => item.active || item.id === selectedId)
+        .sort((a, b) => a.name.localeCompare(b.name, "bg"));
+
+    categories.forEach(category => {
+        const option = document.createElement("option");
+
+        option.value = category.id;
+        option.textContent = category.name;
+
+        select.appendChild(option);
+    });
+
+    // Запазваме възможността за редакция на стар запис,
+    // дори ако категорията му вече е изтрита от каталога.
+    if (
+        selectedId &&
+        !categories.some(item => item.id === selectedId)
+    ) {
+        const option = document.createElement("option");
+
+        option.value = selectedId;
+        option.textContent = CATEGORY_NAMES[selectedId] || selectedId;
+
+        select.appendChild(option);
+    }
+
+    select.value = selectedId;
+}
+
+
+/* =====================================================
+   РЕНДЕРИРАНЕ НА ДЪРВОВИДНАТА СТРУКТУРА
+===================================================== */
+
+function renderCatalogManager() {
+
+    const tree = document.getElementById("catalogTree");
+
+    if (!tree) return;
+
+    const search = document.getElementById("catalogManagerSearch")
+        .value.trim().toLowerCase();
+
+
+    function filterItems(items) {
+        return items.filter(item =>
+            !search || item.name.toLowerCase().includes(search)
+        );
+    }
+
+
+    function renderNodes(type, items) {
+
+    const filtered = filterItems(items);
+
+    if (filtered.length === 0) {
+        return search
+            ? ""
+            : '<li class="catalog-tree-empty">Няма записи.</li>';
+    }
+
+    return filtered.map(item => {
+
+        const selected =
+            selectedCatalogItem &&
+            selectedCatalogItem.type === type &&
+            selectedCatalogItem.id === item.id;
+
+        const statusIcon = item.active
+            ? "images/icons/check.png"
+            : "images/icons/cross.png";
+
+        return `
+            <li>
+
+                <button type="button"
+                        class="catalog-tree-node ${selected ? "selected" : ""}"
+                        data-type="${type}"
+                        data-id="${escapeHTML(item.id)}">
+
+                    <span class="catalog-tree-status">
+                        <img src="${statusIcon}"
+                             alt="${item.active ? "Активен" : "Неактивен"}">
+                    </span>
+
+                    <span>${escapeHTML(item.name)}</span>
+
+                </button>
+
+            </li>
+        `;
+
+    }).join("");
+}
+
+function renderGroup(type, label, items) {
+
+    const filtered = filterItems(items);
+
+    if (search && filtered.length === 0) {
+        return "";
+    }
+
+    return `
+        <li>
+
+            <button type="button"
+                    class="catalog-tree-group"
+                    data-group-toggle>
+
+                <img src="images/icons/folder.png"
+                     class="catalog-tree-folder-icon"
+                     alt="">
+
+                <span>${label}</span>
+
+            </button>
+
+            <ul>
+                ${renderNodes(type, items)}
+            </ul>
+
+        </li>
+    `;
+}
+    
+
+    const factoryCategories = data.catalogs.categories
+        .filter(item => item.builtin);
+
+    const customCategories = data.catalogs.categories
+        .filter(item => !item.builtin);
+
+
+    const factoryContent = renderNodes(
+        "categories",
+        factoryCategories
+    );
+
+    const personalizedContent = [
+        renderGroup(
+            "categories",
+            "Категории",
+            customCategories
+        ),
+
+        renderGroup(
+            "sources",
+            "Източници",
+            data.catalogs.sources
+        ),
+
+        renderGroup(
+            "suppliers",
+            "Доставчици",
+            data.catalogs.suppliers
+        )
+
+    ].join("");
+
+
+    tree.innerHTML = `
+
+        <li>
+
+            <button type="button"
+        class="catalog-tree-group"
+        data-group-toggle>
+
+    <img src="images/icons/folder.png"
+         class="catalog-tree-folder-icon"
+         alt="">
+
+    <span>Фабрични категории</span>
+
+</button>
+
+            <ul>
+                ${factoryContent || '<li class="catalog-tree-empty">Няма намерени категории.</li>'}
+            </ul>
+
+        </li>
+
+
+        <li>
+
+            <button type="button"
+        class="catalog-tree-group"
+        data-group-toggle>
+
+    <img src="images/icons/folder.png"
+         class="catalog-tree-folder-icon"
+         alt="">
+
+    <span>Персонализирани данни</span>
+
+</button>
+
+            <ul>
+                ${personalizedContent || '<li class="catalog-tree-empty">Няма персонализирани записи.</li>'}
+            </ul>
+
+        </li>
+
+    `;
+
+
+    renderCatalogSelectionInfo();
+}
+
+
+/* =====================================================
+   ИНФОРМАЦИЯ ЗА ИЗБРАНИЯ ЗАПИС
+===================================================== */
+
+function renderCatalogSelectionInfo() {
+
+    const info = document.getElementById("catalogSelectionInfo");
+
+    if (!info) return;
+
+    if (!selectedCatalogItem) {
+
+        info.innerHTML = `
+            <div class="catalog-info-empty">
+                <img src="images/icons/folder.png" alt="">
+                <span>Избери запис от дървовидната структура.</span>
+            </div>
+        `;
+
+        return;
+    }
+
+    const item = getCatalogItem(
+        selectedCatalogItem.type,
+        selectedCatalogItem.id
+    );
+
+    if (!item) {
+
+        selectedCatalogItem = null;
+
+        info.textContent = "Няма избран запис.";
+
+        return;
+    }
+
+    const statusIcon = item.active
+        ? "images/icons/check.png"
+        : "images/icons/cross.png";
+
+    const statusText = item.active
+        ? "Активен"
+        : "Неактивен";
+
+    const typeName = getCatalogTypeName(selectedCatalogItem.type);
+
+    const itemKind = item.builtin
+        ? "Фабричен запис"
+        : "Персонализиран запис";
+
+    info.innerHTML = `
+
+        <div class="catalog-info-heading">
+
+            <img src="images/icons/catInfo.png" alt="">
+
+            <span>${escapeHTML(item.name)}</span>
+
+        </div>
+
+
+        <div class="catalog-info-grid">
+
+            <span class="catalog-info-label">
+                Вид на записа:
+            </span>
+
+            <span class="catalog-info-value">
+                ${escapeHTML(typeName)}
+            </span>
+
+
+            <span class="catalog-info-label">
+                Наименование:
+            </span>
+
+            <span class="catalog-info-value">
+                ${escapeHTML(item.name)}
+            </span>
+
+
+            <span class="catalog-info-label">
+                Статус:
+            </span>
+
+            <span class="catalog-info-value catalog-info-status">
+
+                <img src="${statusIcon}" alt="">
+
+                ${statusText}
+
+            </span>
+
+
+            <span class="catalog-info-label">
+                Произход:
+            </span>
+
+            <span class="catalog-info-value">
+                ${itemKind}
+            </span>
+
+        </div>
+
+    `;
+}
+
+
+/* =====================================================
+   ИЗБОР НА ЕЛЕМЕНТ ОТ ДЪРВОТО
+===================================================== */
+
+function selectCatalogItem(type, id) {
+
+    const item = getCatalogItem(type, id);
+
+    if (!item) return;
+
+    selectedCatalogItem = {
+        type,
+        id
+    };
+
+    document.getElementById("catalogEditorType").value = type;
+
+    renderCatalogManager();
+}
+
+
+/* =====================================================
+   ДОБАВЯНЕ НА НОВ ЗАПИС
+===================================================== */
+
+function startCatalogAdd() {
+
+    catalogEditorMode = "add";
+
+    const type = selectedCatalogItem
+        ? selectedCatalogItem.type
+        : document.getElementById("catalogEditorType").value;
+
+    document.getElementById("catalogEditorType").value = type;
+
+    document.getElementById("catalogEditorName").value = "";
+
+    document.getElementById("catalogEditorTitle").textContent =
+        "Добавяне на нов запис";
+
+    document.getElementById("catalogSaveItemButton").innerHTML = `
+        <img src="images/icons/check.png" alt="">
+        Добави
+    `;
+
+    document.getElementById("catalogEditorName").focus();
+}
+
+
+/* =====================================================
+   РЕДАКТИРАНЕ НА ЗАПИС
+===================================================== */
+
+function startCatalogEdit() {
+
+    if (!selectedCatalogItem) {
+        alert("Първо избери запис от дървото.");
+        return;
+    }
+
+    const item = getCatalogItem(
+        selectedCatalogItem.type,
+        selectedCatalogItem.id
+    );
+
+    if (!item) return;
+
+    if (item.builtin) {
+        alert("Фабричните категории не могат да бъдат преименувани.");
+        return;
+    }
+
+    catalogEditorMode = "edit";
+
+    document.getElementById("catalogEditorType").value =
+        selectedCatalogItem.type;
+
+    document.getElementById("catalogEditorName").value =
+        item.name;
+
+    document.getElementById("catalogEditorTitle").textContent =
+        "Редактиране на запис";
+
+    document.getElementById("catalogSaveItemButton").innerHTML = `
+        <img src="images/icons/check.png" alt="">
+        Обнови
+    `;
+
+    document.getElementById("catalogEditorName").focus();
+}
+
+
+/* =====================================================
+   ЗАПАЗВАНЕ НА КАТЕГОРИЯ / ИЗТОЧНИК / ДОСТАВЧИК
+===================================================== */
+
+function saveCatalogEditor() {
+
+    const type = document.getElementById("catalogEditorType").value;
+
+    const name = document.getElementById("catalogEditorName")
+        .value.trim();
+
+    if (!name) {
+        alert("Въведи наименование.");
+        return;
+    }
+
+    const items = getCatalogItems(type);
+
+    const duplicate = items.find(item =>
+        item.name.toLowerCase() === name.toLowerCase() &&
+        (
+            catalogEditorMode !== "edit" ||
+            item.id !== selectedCatalogItem?.id
+        )
+    );
+
+    if (duplicate) {
+        alert("Вече съществува запис с това наименование.");
+        return;
+    }
+
+
+    if (catalogEditorMode === "edit") {
+
+        if (!selectedCatalogItem) return;
+
+        const item = getCatalogItem(
+            selectedCatalogItem.type,
+            selectedCatalogItem.id
+        );
+
+        if (!item || item.builtin) return;
+
+        item.name = name;
+        item.updatedAt = new Date().toISOString();
+
+    } else {
+
+        const newItem = {
+            id: createId(
+                type === "categories"
+                    ? "category"
+                    : type === "sources"
+                        ? "source"
+                        : "supplier"
+            ),
+
+            name,
+            active: true,
+            builtin: false,
+            createdAt: new Date().toISOString()
+        };
+
+        data.catalogs[type].push(newItem);
+
+        selectedCatalogItem = {
+            type,
+            id: newItem.id
+        };
+    }
+
+
+    syncCategoryNames();
+
+    saveData();
+
+    renderCatalogManager();
+
+    populateRecordCategorySelect(
+        document.getElementById("recordCategory")?.value || ""
+    );
+
+    document.getElementById("catalogEditorName").value = "";
+
+    catalogEditorMode = "add";
+
+    document.getElementById("catalogEditorTitle").textContent =
+        "Нов запис";
+
+    document.getElementById("catalogSaveItemButton").innerHTML = `
+        <img src="images/icons/check.png" alt="">
+        Запази
+    `;
+
+    setStatus("Данните са обновени.");
+}
+
+
+/* =====================================================
+   АКТИВИРАНЕ И ДЕАКТИВИРАНЕ
+===================================================== */
+
+function changeCatalogItemStatus(active) {
+
+    if (!selectedCatalogItem) {
+        alert("Избери запис от дървото.");
+        return;
+    }
+
+    const item = getCatalogItem(
+        selectedCatalogItem.type,
+        selectedCatalogItem.id
+    );
+
+    if (!item) return;
+
+    if (item.active === active) {
+        alert(active
+            ? "Записът вече е активен."
+            : "Записът вече е деактивиран."
+        );
+        return;
+    }
+
+    item.active = active;
+
+    item.updatedAt = new Date().toISOString();
+
+    saveData();
+
+    renderCatalogManager();
+
+    populateRecordCategorySelect(
+        document.getElementById("recordCategory")?.value || ""
+    );
+
+    setStatus(
+        active
+            ? "Записът е активиран."
+            : "Записът е деактивиран."
+    );
+}
+
+
+/* =====================================================
+   ИЗТРИВАНЕ
+===================================================== */
+
+function deleteCatalogItem() {
+
+    if (!selectedCatalogItem) {
+        alert("Избери запис от дървото.");
+        return;
+    }
+
+    const { type, id } = selectedCatalogItem;
+
+    const item = getCatalogItem(type, id);
+
+    if (!item) return;
+
+    if (item.builtin) {
+        alert("Фабричните категории не могат да бъдат изтрити.");
+        return;
+    }
+
+
+    // Не позволяваме изтриване на категория,
+    // която вече се използва във финансови операции.
+
+    if (
+        type === "categories" &&
+        data.records.some(record => record.category === id)
+    ) {
+        alert(
+            "Тази категория се използва в съществуващи записи.\n" +
+            "Можеш да я деактивираш, вместо да я изтриваш."
+        );
+        return;
+    }
+
+
+    // Същото правило важи за източниците и доставчиците.
+
+    if (
+        (type === "sources" || type === "suppliers") &&
+        data.records.some(record =>
+            record.source === item.name &&
+            (
+                record.sourceType === type ||
+                !record.sourceType
+            )
+        )
+    ) {
+        alert(
+            "Този запис се използва в съществуващи операции.\n" +
+            "Можеш да го деактивираш, вместо да го изтриваш."
+        );
+        return;
+    }
+
+
+    if (!confirm(
+        "Сигурен ли си, че искаш да изтриеш \"" +
+        item.name + "\"?"
+    )) {
+        return;
+    }
+
+
+    data.catalogs[type] = data.catalogs[type].filter(
+        entry => entry.id !== id
+    );
+
+    selectedCatalogItem = null;
+
+    syncCategoryNames();
+
+    saveData();
+
+    renderCatalogManager();
+
+    setStatus("Записът е изтрит.");
+}
+
+
+/* =====================================================
+   ОТВАРЯНЕ НА ГЛАВНИЯ ПРОЗОРЕЦ
+===================================================== */
+
+function openCatalogManager() {
+
+    selectedCatalogItem = null;
+
+    document.getElementById("catalogManagerSearch").value = "";
+
+    renderCatalogManager();
+
+    openDialog("catalogManagerDialog");
+}
+
+
+/* =====================================================
+   ПРОЗОРЕЦ ЗА ИЗБОР
+===================================================== */
+
+function openCatalogPicker(mode, initialType) {
+
+    catalogPickerMode = mode;
+
+    selectedCatalogPickerId = null;
+
+    const typeSelect = document.getElementById("catalogPickerType");
+
+    if (mode === "category") {
+
+        typeSelect.value = "categories";
+        typeSelect.disabled = true;
+
+        document.getElementById("catalogPickerTitle").textContent =
+            "Избор на категория";
+
+        const currentSource =
+    document.getElementById("recordSource").value.trim();
+
+const matchingItem = getCatalogItems(typeSelect.value).find(
+    item => item.name === currentSource
+);
+
+selectedCatalogPickerId = matchingItem
+    ? matchingItem.id
+    : null;
+
+    } else {
+
+        typeSelect.disabled = false;
+
+        typeSelect.querySelector('option[value="categories"]').disabled = true;
+
+        typeSelect.value =
+            initialType || "sources";
+
+        document.getElementById("catalogPickerTitle").textContent =
+            "Избор на източник или доставчик";
+
+        selectedCatalogPickerId =
+            document.getElementById("recordSource").value || null;
+    }
+
+    document.getElementById("catalogPickerSearch").value = "";
+
+    renderCatalogPicker();
+
+    openDialog("catalogPickerDialog");
+}
+
+
+function renderCatalogPicker() {
+
+    const type = document.getElementById("catalogPickerType").value;
+
+    const search = document.getElementById("catalogPickerSearch")
+        .value.trim().toLowerCase();
+
+    const list = document.getElementById("catalogPickerList");
+
+    const items = getCatalogItems(type)
+        .filter(item =>
+            item.active &&
+            item.name.toLowerCase().includes(search)
+        )
+        .sort((a, b) => a.name.localeCompare(b.name, "bg"));
+
+
+    if (items.length === 0) {
+
+        list.innerHTML = `
+            <div class="catalog-picker-empty">
+                Няма намерени активни записи.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    list.innerHTML = items.map(item => {
+
+        const selected = selectedCatalogPickerId === item.id;
+
+        return `
+    <button type="button"
+            class="catalog-picker-item ${selected ? "selected" : ""}"
+            data-picker-id="${escapeHTML(item.id)}">
+
+        <img src="images/icons/catInfo.png"
+             class="catalog-picker-document-icon"
+             alt="">
+
+        <span>${escapeHTML(item.name)}</span>
+
+    </button>
+`;
+
+    }).join("");
+}
+
+
+function chooseCatalogPickerItem() {
+
+    const type = document.getElementById("catalogPickerType").value;
+
+    if (!selectedCatalogPickerId) {
+        alert("Избери запис от списъка.");
+        return;
+    }
+
+    const item = getCatalogItem(type, selectedCatalogPickerId);
+
+    if (!item || !item.active) {
+        alert("Избраният запис вече не е активен.");
+        renderCatalogPicker();
+        return;
+    }
+
+
+    if (catalogPickerMode === "category") {
+
+        document.getElementById("recordCategory").value = item.id;
+
+    } else {
+
+        document.getElementById("recordSource").value = item.name;
+
+        document.getElementById("recordSourceType").value = type;
+
+        document.getElementById("recordSourceCatalogId").value = item.id;
+
+        setRecordSourceLocked(true);
+    }
+
+
+    closeDialog("catalogPickerDialog");
+}
+
+
+/* =====================================================
+   СВЪРЗВАНЕ НА СЪБИТИЯТА
+===================================================== */
+
+function initializeCatalogEvents() {
+
+    // Главен прозорец
+
+    document.getElementById("catalogManagerButton")
+        .addEventListener("click", openCatalogManager);
+
+
+    // Бутони до полетата
+
+    document.getElementById("openCategoryPickerButton")
+        .addEventListener("click", () => {
+            openCatalogPicker("category", "categories");
+        });
+
+
+    document.getElementById("openSourcePickerButton")
+        .addEventListener("click", () => {
+
+            const recordType =
+                document.getElementById("recordType").value;
+
+            const currentType =
+                document.getElementById("recordSourceType").value;
+
+            openCatalogPicker(
+                "source",
+                currentType || getSuggestedSourceType(recordType)
+            );
+
+        });
+
+
+    // Дървовидна структура
+
+    document.getElementById("catalogTree")
+        .addEventListener("click", event => {
+
+            const groupButton = event.target.closest("[data-group-toggle]");
+
+            if (groupButton) {
+
+                groupButton.classList.toggle("collapsed");
+
+                return;
+            }
+
+            const node = event.target.closest(".catalog-tree-node");
+
+            if (!node) return;
+
+            selectCatalogItem(
+                node.dataset.type,
+                node.dataset.id
+            );
+
+        });
+
+
+    // Действия в главния прозорец
+
+    document.getElementById("activateCatalogButton")
+        .addEventListener("click", () => {
+            changeCatalogItemStatus(true);
+        });
+
+    document.getElementById("deactivateCatalogButton")
+        .addEventListener("click", () => {
+            changeCatalogItemStatus(false);
+        });
+
+    document.getElementById("addCatalogItemButton")
+        .addEventListener("click", startCatalogAdd);
+
+    document.getElementById("editCatalogItemButton")
+        .addEventListener("click", startCatalogEdit);
+
+    document.getElementById("deleteCatalogItemButton")
+        .addEventListener("click", deleteCatalogItem);
+
+    document.getElementById("refreshCatalogButton")
+        .addEventListener("click", () => {
+
+            renderCatalogManager();
+
+            setStatus("Дървото с данните е обновено.");
+        });
+
+    document.getElementById("searchCatalogButton")
+    .addEventListener("click", () => {
+
+        const searchInput =
+            document.getElementById("catalogManagerSearch");
+
+        searchInput.focus();
+
+        searchInput.scrollIntoView({
+            behavior: "smooth",
+            block: "nearest"
+        });
+
+    });
+
+
+    document.getElementById("catalogManagerSearch")
+        .addEventListener("input", renderCatalogManager);
+
+
+    document.getElementById("catalogSaveItemButton")
+        .addEventListener("click", saveCatalogEditor);
+
+
+    document.getElementById("catalogCancelEditButton")
+        .addEventListener("click", () => {
+
+            catalogEditorMode = "add";
+
+            document.getElementById("catalogEditorName").value = "";
+
+            document.getElementById("catalogEditorTitle").textContent =
+                "Нов запис";
+
+            document.getElementById("catalogSaveItemButton").innerHTML = `
+                <img src="images/icons/check.png" alt="">
+                Запази
+            `;
+
+        });
+
+
+    // Прозорец за избор
+
+    document.getElementById("catalogPickerType")
+        .addEventListener("change", () => {
+
+            selectedCatalogPickerId = null;
+
+            renderCatalogPicker();
+
+        });
+
+
+    document.getElementById("catalogPickerSearch")
+        .addEventListener("input", renderCatalogPicker);
+
+
+    document.getElementById("catalogPickerList")
+        .addEventListener("click", event => {
+
+            const button = event.target.closest("[data-picker-id]");
+
+            if (!button) return;
+
+            selectedCatalogPickerId = button.dataset.pickerId;
+
+            renderCatalogPicker();
+
+        });
+
+
+    document.getElementById("catalogPickerChooseButton")
+        .addEventListener("click", chooseCatalogPickerItem);
+
+
+    document.getElementById("catalogPickerRefreshButton")
+        .addEventListener("click", renderCatalogPicker);
+
+
+    document.getElementById("catalogPickerManageButton")
+        .addEventListener("click", () => {
+
+            const type = document.getElementById("catalogPickerType").value;
+
+            closeDialog("catalogPickerDialog");
+
+            openCatalogManager();
+
+            document.getElementById("catalogEditorType").value = type;
+
+        });
+
+}
+
+
 
 function createInitialData() {
 
@@ -117,8 +1271,10 @@ function createInitialData() {
 
         records: [],
         accounts: [],
-        funds: []
-    };
+        funds: [],
+
+        catalogs: createDefaultCatalogs()
+        };
 }
 
 
@@ -150,7 +1306,8 @@ function loadData() {
 
         return {
             ...createInitialData(),
-            ...parsed
+            ...parsed,
+            catalogs: normalizeCatalogs(parsed.catalogs)
         };
 
     } catch (error) {
@@ -2743,6 +3900,349 @@ function removeMonth() {
 
 
 /* =====================================================
+   ТЪРСЕНЕ НА ФИНАНСОВИ ЗАПИСИ
+===================================================== */
+
+let selectedSearchRecordId = null;
+
+
+function searchRecords() {
+
+    const searchText =
+        document.getElementById("recordSearchText")
+            .value.trim().toLowerCase();
+
+    const searchType =
+        document.getElementById("recordSearchType").value;
+
+    const searchCategory =
+        document.getElementById("recordSearchCategory").value;
+
+    const searchStatus =
+        document.getElementById("recordSearchStatus").value;
+
+    const dateFrom =
+        document.getElementById("recordSearchFrom").value;
+
+    const dateTo =
+        document.getElementById("recordSearchTo").value;
+
+
+    const results = data.records
+        .filter(record => {
+
+            // Търсене по текст
+
+            const searchableText = [
+
+                record.description || "",
+                record.source || "",
+                CATEGORY_NAMES[record.category] || "",
+                TYPE_NAMES[record.type] || ""
+
+            ].join(" ").toLowerCase();
+
+
+            if (
+                searchText &&
+                !searchableText.includes(searchText)
+            ) {
+                return false;
+            }
+
+
+            // Вид операция
+
+            if (
+                searchType &&
+                record.type !== searchType
+            ) {
+                return false;
+            }
+
+
+            // Категория
+
+            if (
+                searchCategory &&
+                record.category !== searchCategory
+            ) {
+                return false;
+            }
+
+
+            // Статус
+
+            if (
+                searchStatus === "active" &&
+                !record.active
+            ) {
+                return false;
+            }
+
+            if (
+                searchStatus === "inactive" &&
+                record.active
+            ) {
+                return false;
+            }
+
+
+            // Начална дата
+
+            if (
+                dateFrom &&
+                record.date < dateFrom
+            ) {
+                return false;
+            }
+
+
+            // Крайна дата
+
+            if (
+                dateTo &&
+                record.date > dateTo
+            ) {
+                return false;
+            }
+
+
+            return true;
+
+        })
+        .sort((a, b) =>
+    new Date(a.date) - new Date(b.date)
+);
+
+
+    renderSearchResults(results);
+}
+
+
+function renderSearchResults(records) {
+    
+
+    const tbody =
+        document.getElementById("recordSearchResults");
+
+    const count =
+        document.getElementById("recordSearchCount");
+
+    tbody.innerHTML = "";
+
+    count.textContent =
+        `${records.length} ${records.length === 1 ? "запис" : "записа"}`;
+
+
+    if (records.length === 0) {
+
+        selectedSearchRecordId = null;
+
+        const row = document.createElement("tr");
+
+        row.className = "empty-table-row";
+
+        const cell = document.createElement("td");
+
+        cell.colSpan = 7;
+
+        cell.textContent =
+            "Няма намерени записи.";
+
+        row.appendChild(cell);
+
+        tbody.appendChild(row);
+
+        return;
+    }
+
+
+    if (
+        !records.some(record =>
+            record.id === selectedSearchRecordId
+        )
+    ) {
+        selectedSearchRecordId = null;
+    }
+
+
+    records.forEach(record => {
+
+        const row = document.createElement("tr");
+
+        if (record.id === selectedSearchRecordId) {
+            row.classList.add("search-selected");
+        }
+
+
+        // Статус
+
+        const statusCell = document.createElement("td");
+
+        const statusIcon = document.createElement("img");
+
+        statusIcon.className = "record-status";
+
+        statusIcon.src = record.active
+            ? "images/icons/check.PNG"
+            : "images/icons/cross.PNG";
+
+        statusIcon.alt = record.active
+            ? "Активен"
+            : "Неактивен";
+
+        statusCell.appendChild(statusIcon);
+
+
+        // Вид
+
+        const typeCell = document.createElement("td");
+
+        typeCell.textContent =
+            TYPE_NAMES[record.type] || record.type;
+
+
+        // Дата
+
+        const dateCell = document.createElement("td");
+
+        dateCell.textContent =
+            formatDate(record.date);
+
+
+        // Стойност
+
+        const amountCell = document.createElement("td");
+
+        amountCell.textContent =
+            formatMoney(record.amount);
+
+
+        // Категория
+
+        const categoryCell = document.createElement("td");
+
+        categoryCell.textContent =
+            CATEGORY_NAMES[record.category] || "-";
+
+
+        // Източник
+
+        const sourceCell = document.createElement("td");
+
+        sourceCell.textContent =
+            record.source || "-";
+
+
+        // Описание
+
+        const descriptionCell = document.createElement("td");
+
+        descriptionCell.textContent =
+            record.description || "-";
+
+
+        row.append(
+            statusCell,
+            typeCell,
+            dateCell,
+            amountCell,
+            categoryCell,
+            sourceCell,
+            descriptionCell
+        );
+
+
+        row.addEventListener("click", () => {
+
+            selectedSearchRecordId = record.id;
+
+            renderSearchResults(records);
+
+        });
+
+
+        row.addEventListener("dblclick", () => {
+
+            selectedSearchRecordId = record.id;
+
+            openSelectedSearchRecord();
+
+        });
+
+
+        tbody.appendChild(row);
+
+    });
+
+}
+
+
+function openSelectedSearchRecord() {
+
+    if (!selectedSearchRecordId) {
+
+        alert("Моля, избери запис от резултатите.");
+
+        return;
+    }
+
+
+    const record = data.records.find(item =>
+        item.id === selectedSearchRecordId
+    );
+
+    if (!record) return;
+
+
+    const year = Number(record.date.substring(0, 4));
+
+    const month = Number(record.date.substring(5, 7)) - 1;
+
+
+    const yearObject = getYearObject(year);
+
+
+    if (!yearObject) {
+
+        alert("Не е намерена годината на този запис.");
+
+        return;
+    }
+
+
+    if (!yearObject.months.includes(month)) {
+
+        alert("Не е намерен периодът на този запис.");
+
+        return;
+    }
+
+
+    selectedYear = year;
+
+    selectedMonth = month;
+
+    selectedRecordId = record.id;
+
+
+    renderAll();
+
+    saveData();
+
+
+    closeDialog("searchDialog");
+
+
+    setStatus(
+        `Намерен запис от ${formatDate(record.date)}.`
+    );
+
+}
+
+
+/* =====================================================
    7. ЗАПИСИ - ТАБЛИЦА
 ===================================================== */
 
@@ -2965,6 +4465,56 @@ function updateRecordTypeFields() {
 }
 
 
+
+
+function updateRecordActiveButton() {
+
+    const checkbox =
+        document.getElementById("recordActive");
+
+    const button =
+        document.getElementById("recordActiveButton");
+
+    const icon =
+        document.getElementById("recordActiveIcon");
+
+    const text =
+        document.getElementById("recordActiveText");
+
+    if (!checkbox || !button || !icon || !text) return;
+
+    const active = checkbox.checked;
+
+    if (active) {
+
+        icon.src = "images/icons/check.PNG";
+        icon.alt = "Активен";
+
+        text.textContent = "Активен";
+
+        button.setAttribute("aria-label", "Активен запис");
+        button.setAttribute("aria-pressed", "true");
+
+        button.title = "Записът е активен";
+
+    } else {
+
+        icon.src = "images/icons/cross.PNG";
+        icon.alt = "Неактивен";
+
+        text.textContent = "Неактивен";
+
+        button.setAttribute("aria-label", "Неактивен запис");
+        button.setAttribute("aria-pressed", "false");
+
+        button.title = "Записът е неактивен";
+    }
+}
+
+
+
+
+
 function addRecord() {
 
     if (isPeriodArchived(selectedYear, selectedMonth)) {
@@ -2985,6 +4535,17 @@ function addRecord() {
 
     document.getElementById("recordForm").reset();
 
+    document.getElementById("recordSourceCatalogId").value = "";
+
+    setRecordSourceLocked(false);
+
+    populateRecordCategorySelect();
+
+document.getElementById("recordSourceType").value =
+    getSuggestedSourceType(
+        document.getElementById("recordType").value
+    );
+
     document.getElementById("recordId").value = "";
 
     document.getElementById("recordDialogTitle").textContent =
@@ -2993,6 +4554,7 @@ function addRecord() {
     document.getElementById("recordDate").value = todayString();
 
     document.getElementById("recordActive").checked = false;
+    updateRecordActiveButton();
 
     populateAccountSelect("recordAccount");
     populateAccountSelect("destinationAccount");
@@ -3049,14 +4611,27 @@ if (isPeriodArchived(period.year, period.month)) {
     document.getElementById("recordSource").value =
         record.source || "";
 
+    document.getElementById("recordSourceCatalogId").value =
+    record.sourceCatalogId || "";
+
+    setRecordSourceLocked(!!record.sourceCatalogId);
+
     document.getElementById("recordDescription").value =
         record.description || "";
 
-    document.getElementById("recordCategory").value =
-        record.category || "";
+    populateRecordCategorySelect(record.category || "");
+
+document.getElementById("recordCategory").value =
+    record.category || "";
+
+document.getElementById("recordSourceType").value =
+    record.sourceType ||
+    getSuggestedSourceType(record.type);
 
     document.getElementById("recordActive").checked =
         record.active;
+
+        updateRecordActiveButton();
 
     populateAccountSelect("recordAccount", record.accountId);
 
@@ -3162,21 +4737,30 @@ function saveRecord(event) {
             document.getElementById("recordCategory").value,
 
         source:
-            document.getElementById("recordSource").value.trim(),
+    document.getElementById("recordSource").value.trim(),
 
-        description:
-            document.getElementById("recordDescription").value.trim(),
+sourceType:
+    document.getElementById("recordSourceType").value ||
+    getSuggestedSourceType(type),
 
-        active:
-            document.getElementById("recordActive").checked,
+sourceCatalogId:
+    document.getElementById("recordSourceCatalogId")?.value || null,
 
-        fundId: null,
+description:
+    document.getElementById("recordDescription").value.trim(),
 
-        createdAt:
-            existingRecord?.createdAt || new Date().toISOString(),
+active:
+    document.getElementById("recordActive").checked,
 
-        updatedAt: new Date().toISOString()
-    };
+fundId: null,
+
+createdAt:
+    existingRecord?.createdAt || new Date().toISOString(),
+
+updatedAt: new Date().toISOString()
+};
+
+    
 
     /*
        Проверяваме дали сметката ще остане с
@@ -3278,42 +4862,42 @@ function saveRecord(event) {
    9. АКТИВИРАНЕ И ДЕАКТИВИРАНЕ
 ===================================================== */
 
-function changeRecordStatus(active) {
+// function changeRecordStatus(active) {
 
-    if (!selectedRecordId) {
+//     if (!selectedRecordId) {
 
-        alert("Моля, избери запис.");
-        return;
-    }
+//         alert("Моля, избери запис.");
+//         return;
+//     }
 
-    const record = data.records.find(
-        item => item.id === selectedRecordId
-    );
+//     const record = data.records.find(
+//         item => item.id === selectedRecordId
+//     );
 
-    if (!record) return;
+//     if (!record) return;
 
-    if (record.active === active) {
+//     if (record.active === active) {
 
-        alert(
-            active
-                ? "Записът вече е активен."
-                : "Записът вече е неактивен."
-        );
+//         alert(
+//             active
+//                 ? "Записът вече е активен."
+//                 : "Записът вече е неактивен."
+//         );
 
-        return;
-    }
+//         return;
+//     }
 
-    record.active = active;
+//     record.active = active;
 
-    renderAll();
-    saveData();
+//     renderAll();
+//     saveData();
 
-    setStatus(
-        active
-            ? "Записът е активиран."
-            : "Записът е деактивиран."
-    );
-}
+//     setStatus(
+//         active
+//             ? "Записът е активиран."
+//             : "Записът е деактивиран."
+//     );
+// }
 
 
 /* =====================================================
@@ -4249,12 +5833,15 @@ function populateFilterOptions() {
     categorySelect.innerHTML =
         '<option value="">Всички категории</option>';
 
-    Object.entries(CATEGORY_NAMES).forEach(([key, name]) => {
+    data.catalogs.categories
+    .filter(category => category.active)
+    .sort((a, b) => a.name.localeCompare(b.name, "bg"))
+    .forEach(category => {
 
         const option = document.createElement("option");
 
-        option.value = key;
-        option.textContent = name;
+        option.value = category.id;
+        option.textContent = category.name;
 
         categorySelect.appendChild(option);
     });
@@ -4752,10 +6339,26 @@ function initializeEvents() {
     document.getElementById("recordForm")
         .addEventListener("submit", saveRecord);
 
+        // Смяна на статуса на записа
+
+document.getElementById("recordActiveButton")
+    .addEventListener("click", () => {
+
+        const checkbox =
+            document.getElementById("recordActive");
+
+        checkbox.checked = !checkbox.checked;
+
+        updateRecordActiveButton();
+
+    });
+
     document.getElementById("recordType")
         .addEventListener("change", updateRecordTypeFields);
 
 
+    // Система за категории, източници и доставчици
+    initializeCatalogEvents();
     // Сметки
 
     document.getElementById("accountsButton")
@@ -4881,6 +6484,79 @@ document.addEventListener("keydown", event => {
     }
 
 });
+
+
+
+// ТЪРСЕНЕ НА ЗАПИСИ
+
+const searchButton =
+    document.getElementById("searchButton");
+
+if (searchButton) {
+
+    searchButton.addEventListener("click", () => {
+
+        selectedSearchRecordId = null;
+
+        searchRecords();
+
+        openDialog("searchDialog");
+
+        document.getElementById("recordSearchText").focus();
+
+    });
+
+}
+
+
+// Автоматично търсене при промяна на критериите
+
+[
+    "recordSearchText",
+    "recordSearchType",
+    "recordSearchCategory",
+    "recordSearchStatus",
+    "recordSearchFrom",
+    "recordSearchTo"
+
+].forEach(id => {
+
+    document.getElementById(id)
+        .addEventListener("input", searchRecords);
+
+});
+
+
+// Изчистване на търсенето
+
+document.getElementById("clearRecordSearchButton")
+    .addEventListener("click", () => {
+
+        document.getElementById("recordSearchText").value = "";
+
+        document.getElementById("recordSearchType").value = "";
+
+        document.getElementById("recordSearchCategory").value = "";
+
+        document.getElementById("recordSearchStatus").value = "";
+
+        document.getElementById("recordSearchFrom").value = "";
+
+        document.getElementById("recordSearchTo").value = "";
+
+        selectedSearchRecordId = null;
+
+        searchRecords();
+
+    });
+
+
+// Отваряне на избрания резултат
+
+document.getElementById("openSearchResultButton")
+    .addEventListener("click", openSelectedSearchRecord);
+
+
 
     // Други бутони
 
@@ -6082,31 +7758,68 @@ function initializeManual() {
     });
 
 
-    /* РАЗГЪВАНЕ И СВИВАНЕ */
+    /* РАЗГЪВАНЕ И СВИВАНЕ НА ДЪРВОТО */
 
-    document.querySelectorAll(".manual-group-toggle").forEach(button => {
+document.querySelectorAll(".manual-group-toggle").forEach(button => {
 
-        button.addEventListener("click", () => {
+    const group =
+        button.closest(".manual-tree-group");
 
-            const group =
-                button.closest(".manual-tree-group");
+    const subtopics =
+        group.querySelector(".manual-subtopics");
 
-            const subtopics =
-                group.querySelector(".manual-subtopics");
+    const toggleBox =
+        button.querySelector(".manual-tree-toggle-box");
 
-            const expanded =
-                button.getAttribute("aria-expanded") === "true";
 
-            button.setAttribute(
-                "aria-expanded",
-                String(!expanded)
-            );
+    // Начално състояние
 
-            subtopics.classList.toggle("collapsed", expanded);
+    const initiallyExpanded =
+        button.getAttribute("aria-expanded") === "true";
 
-        });
+    if (toggleBox) {
+
+        toggleBox.textContent =
+            initiallyExpanded ? "−" : "+";
+
+    }
+
+    subtopics.classList.toggle(
+        "collapsed",
+        !initiallyExpanded
+    );
+
+
+    // При натискане
+
+    button.addEventListener("click", () => {
+
+        const expanded =
+            button.getAttribute("aria-expanded") === "true";
+
+
+        button.setAttribute(
+            "aria-expanded",
+            String(!expanded)
+        );
+
+
+        subtopics.classList.toggle(
+            "collapsed",
+            expanded
+        );
+
+
+        if (toggleBox) {
+
+            toggleBox.textContent =
+                expanded ? "+" : "−";
+
+        }
 
     });
+
+});
 
 
     showManualTopic("intro");
